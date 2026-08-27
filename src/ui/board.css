@@ -1,6 +1,7 @@
 :root {
   --gap: 4px;
-  --card-w: calc((100vw - 8 * var(--gap)) / 7);
+  --columns: 7; /* overridden per game by the board builder */
+  --card-w: calc((100vw - (var(--columns) + 1) * var(--gap)) / var(--columns));
   --card-h: calc(var(--card-w) * 1.4);
   --fan-y: calc(var(--card-h) * 0.28); /* face-up overlap */
   --fan-y-down: calc(var(--card-h) * 0.12); /* tighter for face-down */

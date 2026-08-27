@@ -41,8 +41,9 @@
   background: #f6f1e3;
   border: 1px solid #b9ac8d;
   color: #2b2620;
-  /* Floor of 9px: text never shrinks below it, even on narrower cards. */
-  font-size: max(calc(var(--card-w) * 0.2), 9px);
+  /* Floor of 8px (revised 2026-08-27 for 8-column levels): text never
+     shrinks below it, even on narrower cards. */
+  font-size: max(calc(var(--card-w) * 0.2), 8px);
   line-height: 1.15;
   /* Top-aligned so the word stays readable on the fan strip when covered. */
   align-items: flex-start;
@@ -54,7 +55,7 @@
 
 .card.category .front {
   background: #e9b949;
-  border: 2px solid #8a6b1f;
+  border: 1px solid #8a6b1f;
   color: #3a2c0a;
   font-weight: 600;
 }

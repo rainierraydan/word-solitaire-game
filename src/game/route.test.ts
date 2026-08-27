@@ -116,7 +116,7 @@ describe('routeCardTap', () => {
     const state = makeState();
     state.piles['tableau-0'] = ['word:a:a1'];
     state.faceUp = new Set(['word:a:a1']);
-    for (const id of ['tableau-1', 'tableau-2', 'tableau-3', 'tableau-4', 'tableau-5', 'tableau-6'] as const) {
+    for (const id of ['tableau-1', 'tableau-2', 'tableau-3', 'tableau-4', 'tableau-5', 'tableau-6', 'tableau-7'] as const) {
       state.piles[id] = [`filler:${id}`];
     }
     expect(expectInvalid(routeCardTap(state, 'word:a:a1'))).toMatch(/no legal destination/);

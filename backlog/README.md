@@ -68,7 +68,7 @@ Gotchas, pointers, constraints.
 | T-026 | PWA manifest and icons                               | ready   | infra       | T-016                             |
 | T-027 | Vercel deployment                                    | done        | infra       | T-018, T-019                      |
 | T-028 | Rules and validator test suite                       | ready   | state       | T-004, T-007, T-008, T-010, T-011 |
-| T-029 | Real content authoring                               | ready   | data        | T-004, T-020                      |
+| T-029 | Real content authoring                               | done        | data    | T-004, T-020                      |
 | T-030 | Tableau same-category stacking rule                  | done    | state       | T-010                             |
 | T-031 | Foundation category label and progress counter      | done    | layout      | T-015                             |
 | T-032 | Word visible on the fan strip of stacked cards       | done        | layout  | T-020, T-030                      |
@@ -76,6 +76,9 @@ Gotchas, pointers, constraints.
 | T-034 | Center the top card's word on foundations            | done        | layout  | T-031, T-032                      |
 | T-035 | Allow waste cards onto the tableau                   | done        | state   | T-030                             |
 | T-036 | Same-category stacks move as indivisible blocks      | done        | state   | T-033                             |
+| T-037 | Variable board geometry from game state              | done        | state   | T-006, T-012                      |
+| T-038 | Randomized category and word selection per game      | done        | state   | T-007, T-029, T-037               |
+| T-039 | Level system and progression                         | done        | interaction | T-011, T-021, T-038           |
 
 ## Dependency graph
 
@@ -110,6 +113,8 @@ graph LR
     T033[T-033 run moves]
     T035[T-035 waste to tableau]
     T036[T-036 indivisible blocks]
+    T037[T-037 variable board]
+    T038[T-038 randomized deal]
   end
   subgraph ui
     T012[T-012 board shell]
@@ -123,6 +128,7 @@ graph LR
   end
   subgraph interaction
     T017[T-017 pointer input]
+    T039[T-039 level system]
     T018[T-018 stock/waste UI]
     T019[T-019 tap-to-move]
     T021[T-021 new-deal control]
@@ -168,6 +174,14 @@ graph LR
   T032 --> T034
   T030 --> T035
   T033 --> T036
+  T006 --> T037
+  T012 --> T037
+  T037 --> T038
+  T029 --> T038
+  T007 --> T038
+  T038 --> T039
+  T011 --> T039
+  T021 --> T039
   T010 --> T028
   T011 --> T022
   T011 --> T028

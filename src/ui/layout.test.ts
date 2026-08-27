@@ -11,6 +11,12 @@ function makeMetrics(): BoardMetrics {
   return { fanY: 20, fanYDown: 10, slots };
 }
 
+function slotOf(metrics: BoardMetrics, pileId: PileId): { x: number; y: number } {
+  const slot = metrics.slots[pileId];
+  if (slot === undefined) throw new Error(`no slot for ${pileId}`);
+  return slot;
+}
+
 describe('layout', () => {
   const metrics = makeMetrics();
 
@@ -23,7 +29,7 @@ describe('layout', () => {
   it('stacks stock, waste, and foundation cards on the slot spot', () => {
     const state = deal(CATEGORIES, 42);
     const positions = layout(state, metrics);
-    const base = metrics.slots.stock;
+    const base = slotOf(metrics, 'stock');
     for (const cardId of state.piles.stock) {
       const pos = positions.get(cardId);
       expect(pos).toMatchObject({ x: base.x, y: base.y });
@@ -34,7 +40,7 @@ describe('layout', () => {
     const state = deal(CATEGORIES, 42);
     const positions = layout(state, metrics);
     const column = state.piles['tableau-2']; // 2 face-down + 1 face-up
-    const base = metrics.slots['tableau-2'];
+    const base = slotOf(metrics, 'tableau-2');
     const ys = column.map((id) => {
       const pos = positions.get(id);
       if (pos === undefined) throw new Error(`no position for ${id}`);
@@ -50,13 +56,13 @@ describe('layout', () => {
       state.faceUp.add(id);
     }
     const positions = layout(state, metrics);
-    const base = metrics.slots['tableau-2'];
+    const base = slotOf(metrics, 'tableau-2');
     const ys = state.piles['tableau-2'].map((id) => positions.get(id)?.y);
     expect(ys).toEqual([base.y, base.y + metrics.fanY, base.y + 2 * metrics.fanY]);
   });
 
   it('assigns z following pile order, bottom to top', () => {
-    const state = deal(CATEGORIES, 42);
+    const state = deal(CATEGORIES, 42, 4); // level 4: 7 columns
     const positions = layout(state, metrics);
     const zs = state.piles['tableau-6'].map((id) => positions.get(id)?.z);
     expect(zs).toEqual([1, 2, 3, 4, 5, 6, 7]);

@@ -9,9 +9,10 @@ export type Card = {
   label: string;
 };
 
-// Design constants, not content-derived: the board has a fixed number of
-// foundation slots and tableau columns. The id lists are the single source —
-// counts and types derive from them.
+// The maximum pile sets — the type-level universe. How many are *active* in
+// a given game comes from the level config and lives in State; inactive piles
+// exist but stay empty and get no DOM slot. The id lists are the single
+// source — counts and types derive from them.
 export const FOUNDATION_IDS = [
   'foundation-0',
   'foundation-1',
@@ -28,6 +29,7 @@ export const TABLEAU_IDS = [
   'tableau-4',
   'tableau-5',
   'tableau-6',
+  'tableau-7',
 ] as const;
 
 export type FoundationId = (typeof FOUNDATION_IDS)[number];
@@ -51,7 +53,24 @@ export type State = {
   seed: number;
   rngState: number;
   completedCategoryIds: string[];
+  level: number;
+  foundationCount: number;
+  tableauCount: number;
 };
+
+export function activeFoundationIds(state: State): readonly FoundationId[] {
+  return FOUNDATION_IDS.slice(0, state.foundationCount);
+}
+
+export function activeTableauIds(state: State): readonly TableauId[] {
+  return TABLEAU_IDS.slice(0, state.tableauCount);
+}
+
+export function isActivePile(state: State, pileId: PileId): boolean {
+  if (isFoundationId(pileId)) return activeFoundationIds(state).includes(pileId);
+  if (isTableauId(pileId)) return activeTableauIds(state).includes(pileId);
+  return true; // stock and waste always exist
+}
 
 function emptyPiles(): Record<PileId, CardId[]> {
   // Object.fromEntries widens keys to string; PILE_IDS covers every PileId.
@@ -59,7 +78,12 @@ function emptyPiles(): Record<PileId, CardId[]> {
   return Object.fromEntries(entries) as Record<PileId, CardId[]>;
 }
 
-export function createEmptyState(seed: number): State {
+export type BoardShape = { level: number; foundationCount: number; tableauCount: number };
+
+export function createEmptyState(
+  seed: number,
+  shape: BoardShape = { level: 1, foundationCount: FOUNDATION_IDS.length, tableauCount: TABLEAU_IDS.length },
+): State {
   return {
     cards: {},
     piles: emptyPiles(),
@@ -67,6 +91,9 @@ export function createEmptyState(seed: number): State {
     seed,
     rngState: createRng(seed).state,
     completedCategoryIds: [],
+    level: shape.level,
+    foundationCount: shape.foundationCount,
+    tableauCount: shape.tableauCount,
   };
 }
 

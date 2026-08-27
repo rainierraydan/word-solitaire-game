@@ -35,7 +35,8 @@ Load-bearing. Breaking one costs a refactor.
 - **Pixel math never leaks into state, and a DOM read never influences game logic.**
 - **`render()` is full and idempotent.** Recomputing every card costs well under a millisecond.
   Do not write partial or diffing render paths.
-- **Card elements are created once at boot** and never destroyed or reordered in the DOM.
+- **Card elements are created once per deal** (each game draws its own card subset) and never
+  destroyed or reordered while that game runs.
   Movement is `transform` only.
 - **All mutation goes through explicit action functions** (`drawFromStock`, `playCardToFoundation`,
   …) that take a state and return a new one. This is what makes undo, seeded replay, and unit

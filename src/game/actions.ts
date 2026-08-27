@@ -2,6 +2,7 @@ import { shuffle } from './rng';
 import {
   countWords,
   findPile,
+  isActivePile,
   isTableauId,
   openCategoryId,
   PILE_IDS,
@@ -29,6 +30,9 @@ function cloneState(state: State): State {
     seed: state.seed,
     rngState: state.rngState,
     completedCategoryIds: [...state.completedCategoryIds],
+    level: state.level,
+    foundationCount: state.foundationCount,
+    tableauCount: state.tableauCount,
   };
 }
 
@@ -99,6 +103,9 @@ export function playToFoundation(
   cardId: CardId,
   foundationId: FoundationId,
 ): ActionResult {
+  if (!isActivePile(state, foundationId)) {
+    return invalid(`"${foundationId}" is not on this board`);
+  }
   const source = playableRun(state, cardId);
   if ('error' in source) {
     return invalid(source.error);
@@ -143,6 +150,9 @@ export function playToFoundation(
  * category as its face-up top (word or category card).
  */
 export function moveToColumn(state: State, cardId: CardId, columnId: TableauId): ActionResult {
+  if (!isActivePile(state, columnId)) {
+    return invalid(`"${columnId}" is not on this board`);
+  }
   const source = findPile(state, cardId);
   let unit: CardId[];
   if (source === 'waste') {

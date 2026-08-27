@@ -1,6 +1,7 @@
 import type { ActionResult } from '../game/actions';
 import { canPickCard, routeCardTap, routeDrop, routePileTap } from '../game/route';
 import { findPile, PILE_IDS, tableauRun, type CardId, type PileId, type State } from '../game/state';
+import { isWon } from '../game/win';
 import { shake } from './feedback';
 import { attachPointerInput, type TapTarget } from './input';
 
@@ -10,6 +11,7 @@ type ControllerArgs = {
   getState: () => State;
   setState: (state: State) => void;
   repaint: () => void;
+  onWin: () => void;
 };
 
 /**
@@ -18,7 +20,7 @@ type ControllerArgs = {
  * outcome ends in a repaint so state stays the single source of truth.
  */
 export function attachGameController(args: ControllerArgs): void {
-  const { board, cardEls, getState, setState, repaint } = args;
+  const { board, cardEls, getState, setState, repaint, onWin } = args;
   // The dragged run: each element with its offset from the pointer at grab time.
   let lifted: { el: HTMLElement; dx: number; dy: number }[] = [];
 
@@ -29,6 +31,9 @@ export function attachGameController(args: ControllerArgs): void {
       shake(feedbackEl);
     }
     repaint();
+    if (result.ok && isWon(result.state)) {
+      onWin();
+    }
   };
 
   const elFor = (target: TapTarget): HTMLElement | undefined => {

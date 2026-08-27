@@ -7,13 +7,13 @@ import {
   type ActionResult,
 } from './actions';
 import {
+  activeFoundationIds,
+  activeTableauIds,
   findPile,
-  FOUNDATION_IDS,
   isFoundationId,
   isPileEmpty,
   isTableauId,
   openCategoryId,
-  TABLEAU_IDS,
   tableauRun,
   topCard,
   type CardId,
@@ -28,7 +28,7 @@ function matchingColumn(
   categoryId: string,
   exclude: PileId | undefined,
 ): TableauId | undefined {
-  return TABLEAU_IDS.find((id) => {
+  return activeTableauIds(state).find((id) => {
     if (id === exclude) return false;
     const top = topCard(state, id);
     return (
@@ -65,10 +65,10 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
   }
 
   if (holdsCategoryCard) {
-    const empty = FOUNDATION_IDS.find((id) => isPileEmpty(state, id));
+    const empty = activeFoundationIds(state).find((id) => isPileEmpty(state, id));
     if (empty !== undefined) return playToFoundation(state, cardId, empty);
   } else {
-    const open = FOUNDATION_IDS.find((id) => openCategoryId(state, id) === card.categoryId);
+    const open = activeFoundationIds(state).find((id) => openCategoryId(state, id) === card.categoryId);
     if (open !== undefined) return playToFoundation(state, cardId, open);
   }
 
@@ -76,7 +76,7 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
   if (stack !== undefined) return moveToColumn(state, cardId, stack);
 
   if (isTableauId(pile)) {
-    const emptyColumn = TABLEAU_IDS.find((id) => isPileEmpty(state, id));
+    const emptyColumn = activeTableauIds(state).find((id) => isPileEmpty(state, id));
     if (emptyColumn !== undefined) return moveToColumn(state, cardId, emptyColumn);
   }
   return invalid('no legal destination');

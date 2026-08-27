@@ -2,6 +2,7 @@ import './menu.css';
 
 type MenuOptions = {
   getSeed: () => number;
+  getLevel: () => number;
   onNewDeal: () => void;
 };
 
@@ -35,7 +36,7 @@ export function createMenu(board: HTMLElement, options: MenuOptions): void {
     backdrop.classList.toggle('hidden', !open);
     panel.classList.toggle('hidden', !open);
     if (open) {
-      seedLabel.textContent = `Seed: ${options.getSeed()}`;
+      seedLabel.textContent = `Level ${options.getLevel()} · Seed: ${options.getSeed()}`;
     }
   };
 

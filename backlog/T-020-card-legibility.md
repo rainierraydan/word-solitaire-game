@@ -51,3 +51,8 @@ font `max(calc(var(--card-w) * 0.2), 9px)` = 9.37px, floor **9px**):
 - 10 characters (50.3px) does not fit on one line in either style.
 - `MAX_WORD_LENGTH = 8` in the validator agrees with the measured word budget — unchanged.
   T-029 must also keep single-word category names ≤ 7 characters or make them multi-word.
+
+**Floor revision 2026-08-27 (variable boards, T-037):** 8-column levels shrink cards to
+40.5px, where the 9px floor made 7-char labels overflow ("Numbers", "Grandma"). Floor lowered
+to **8px** so scaling stays linear down to 8 columns (font 8.1px there); boards of ≤7 columns
+are unaffected (9.4px+). Verified: zero overflows across the full pool at 8 columns.

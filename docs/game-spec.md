@@ -39,13 +39,25 @@ Runs at boot and as a unit test. Fails loudly and legibly on:
 
 ## Deal
 
-1. Build the deck: one card per category, one per word.
-2. Shuffle with a seeded PRNG (mulberry32). Store the seed in state and expose it via `?seed=`
+Games are played in **levels** (decision 2026-08-27): each level fixes how many categories are
+in play, how many tableau columns, and how many foundation slots (see `src/game/levels.ts` for
+the curve). Winning advances one level; the level persists in `localStorage` and `?level=N`
+overrides it.
+
+1. Draw the game's content from the pool: the level says how many categories; **which ones, and
+   how many of their words (2-8, bounded by the pool), comes from the seeded PRNG.** If the
+   drawn deck cannot cover the tableau plus one stock card, word counts are topped up
+   (seeded, deterministic).
+2. Build the deck: one card per drawn category, one per drawn word.
+3. Shuffle with a seeded PRNG (mulberry32). Store the seed in state and expose it via `?seed=`
    so any deal is reproducible for bug reports and tests.
-3. Deal the tableau: **7 columns.** The **rightmost** gets 7 face-down cards plus 1 face-up.
-   Each column to its left gets one fewer face-down, down to the leftmost with 0 face-down and
-   1 face-up. Total dealt: 28. _(Mirrored relative to standard Klondike — intentional.)_
-4. Remaining cards form the stock.
+4. Deal the tableau over the level's columns: the **rightmost** column gets the most face-down
+   cards; each column to its left gets one fewer, down to the leftmost with 0 face-down and
+   1 face-up on every column. _(Mirrored relative to standard Klondike — intentional.)_
+5. Remaining cards form the stock.
+
+Completion and win derive from the *drawn* subset: a category completes at its drawn word
+count, and the game is won when all drawn categories complete.
 
 ## Board
 
@@ -61,8 +73,9 @@ Runs at boot and as a unit test. Fails loudly and legibly on:
 ```
 
 - **Stock**: top-right. Tap to reveal the next card to the waste.
-- **Foundations**: 5 slots to the left of the stock, all starting empty.
-- **Tableau**: 7 columns below, fanned vertically so face-up cards stay partly readable.
+- **Foundations**: the level's slot count (3-4) to the left of the stock, all starting empty.
+- **Tableau**: the level's columns (5-8) below, fanned vertically so face-up cards stay partly
+  readable.
 
 ## Rules
 

@@ -3,7 +3,7 @@ import { isTableauId, PILE_IDS, type CardId, type PileId, type State } from '../
 export type BoardMetrics = {
   fanY: number;
   fanYDown: number;
-  slots: Record<PileId, { x: number; y: number }>;
+  slots: Partial<Record<PileId, { x: number; y: number }>>; // inactive piles have no slot
 };
 
 export type CardPosition = { x: number; y: number; z: number };
@@ -18,6 +18,7 @@ export function layout(state: State, metrics: BoardMetrics): Map<CardId, CardPos
   const positions = new Map<CardId, CardPosition>();
   for (const pileId of PILE_IDS) {
     const base = metrics.slots[pileId];
+    if (base === undefined) continue; // inactive pile: nothing to place
     const fanned = isTableauId(pileId);
     let y = base.y;
     state.piles[pileId].forEach((cardId, i) => {
