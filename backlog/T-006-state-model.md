@@ -1,7 +1,7 @@
 ---
 id: T-006
 title: State model and core types
-status: blocked
+status: ready
 depends_on: [T-003]
 blocks: [T-007, T-008, T-009, T-010, T-013, T-014]
 estimate: M
