@@ -1,0 +1,73 @@
+:root {
+  --gap: 4px;
+  --card-w: calc((100vw - 8 * var(--gap)) / 7);
+  --card-h: calc(var(--card-w) * 1.4);
+  --fan-y: calc(var(--card-h) * 0.28); /* face-up overlap */
+  --fan-y-down: calc(var(--card-h) * 0.12); /* tighter for face-down */
+
+  --board-bg: #1f6f4a;
+  --slot-border: rgba(255, 255, 255, 0.35);
+}
+
+body {
+  background: var(--board-bg);
+}
+
+.board {
+  box-sizing: border-box;
+  height: 100%;
+  padding: calc(var(--gap) + env(safe-area-inset-top)) calc(var(--gap) + env(safe-area-inset-right))
+    calc(var(--gap) + env(safe-area-inset-bottom)) calc(var(--gap) + env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--gap) * 2);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.board-top {
+  display: flex;
+  gap: var(--gap);
+}
+
+.foundations {
+  display: flex;
+  gap: var(--gap);
+}
+
+.stock-waste {
+  margin-left: auto;
+  display: flex;
+  gap: var(--gap);
+}
+
+.slot {
+  box-sizing: border-box;
+  width: var(--card-w);
+  height: var(--card-h);
+  border: 1px solid var(--slot-border);
+  border-radius: calc(var(--card-w) * 0.08);
+}
+
+.tableau {
+  display: flex;
+  gap: var(--gap);
+  flex: 1;
+  min-height: 0;
+}
+
+.column {
+  width: var(--card-w);
+}
+
+/* Empty-column placeholder, visible until a card covers it. */
+.column::before {
+  content: '';
+  box-sizing: border-box;
+  display: block;
+  height: var(--card-h);
+  border: 1px dashed var(--slot-border);
+  border-radius: calc(var(--card-w) * 0.08);
+}

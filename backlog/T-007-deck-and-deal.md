@@ -1,7 +1,7 @@
 ---
 id: T-007
 title: Deck construction and deal algorithm
-status: blocked
+status: ready
 depends_on: [T-005, T-006]
 blocks: [T-016, T-028]
 estimate: M

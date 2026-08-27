@@ -1,7 +1,7 @@
 ---
 id: T-013
 title: Card DOM structure and CSS, including the flip
-status: blocked
+status: ready
 depends_on: [T-006, T-012]
 blocks: [T-015, T-020]
 estimate: M

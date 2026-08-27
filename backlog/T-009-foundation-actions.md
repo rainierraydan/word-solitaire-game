@@ -1,7 +1,7 @@
 ---
 id: T-009
 title: Foundation actions — open, file, complete, release slot
-status: blocked
+status: ready
 depends_on: [T-006]
 blocks: [T-011, T-019]
 estimate: M

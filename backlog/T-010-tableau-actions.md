@@ -1,7 +1,7 @@
 ---
 id: T-010
 title: Tableau actions — reveal on expose, empty-column move
-status: blocked
+status: ready
 depends_on: [T-006]
 blocks: [T-019, T-028]
 estimate: M
