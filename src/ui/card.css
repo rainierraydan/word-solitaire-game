@@ -37,8 +37,11 @@
   background: #f6f1e3;
   border: 1px solid #b9ac8d;
   color: #2b2620;
-  font-size: calc(var(--card-w) * 0.22);
+  /* Floor of 9px: text never shrinks below it, even on narrower cards. */
+  font-size: max(calc(var(--card-w) * 0.2), 9px);
+  line-height: 1.15;
   text-align: center;
+  text-wrap: balance;
   transform: rotateY(180deg);
 }
 
@@ -46,7 +49,7 @@
   background: #e9b949;
   border: 2px solid #8a6b1f;
   color: #3a2c0a;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* Cards of completed categories leave the board. */
