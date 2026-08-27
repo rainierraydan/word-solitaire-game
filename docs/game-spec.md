@@ -86,8 +86,11 @@ Runs at boot and as a unit test. Fails loudly and legibly on:
 ### Stock
 
 - Only the top waste card is playable.
-- When the stock empties, the waste recycles back into it. Unlimited passes — the deck is large
-  and there is no sequencing to exploit.
+- When the stock empties, the waste is **reshuffled randomly** back into the stock, drawing from
+  the state's seeded PRNG so replays stay reproducible (decision 2026-08-26, superseding the
+  earlier in-order recycle). Only the top waste card is playable, so an in-order recycle would
+  replay the same sequence every pass; reshuffling changes which cards become reachable.
+  Unlimited passes — the deck is large and there is no sequencing to exploit.
 
 ### Win
 
