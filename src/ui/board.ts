@@ -1,4 +1,10 @@
-import { FOUNDATION_IDS, PILE_IDS, TABLEAU_IDS, type PileId } from '../game/state';
+import {
+  FOUNDATION_IDS,
+  PILE_IDS,
+  TABLEAU_IDS,
+  type FoundationId,
+  type PileId,
+} from '../game/state';
 import type { BoardMetrics } from './layout';
 import './board.css';
 
@@ -20,7 +26,14 @@ function group(className: string, children: HTMLElement[]): HTMLElement {
 export function createBoard(root: HTMLElement): HTMLElement {
   const foundations = group(
     'foundations',
-    FOUNDATION_IDS.map((id) => slot(id, 'slot')),
+    FOUNDATION_IDS.map((id) => {
+      const el = slot(id, 'slot');
+      const label = document.createElement('div');
+      label.className = 'slot-label';
+      label.hidden = true;
+      el.append(label);
+      return el;
+    }),
   );
   const stockWaste = group('stock-waste', [slot('stock', 'slot'), slot('waste', 'slot')]);
   const tableau = group(
@@ -31,6 +44,19 @@ export function createBoard(root: HTMLElement): HTMLElement {
   const board = group('board', [group('board-top', [foundations, stockWaste]), tableau]);
   root.replaceChildren(board);
   return board;
+}
+
+/** The progress label element of each foundation slot, for render to write. */
+export function getFoundationLabels(board: HTMLElement): Map<FoundationId, HTMLElement> {
+  const labels = new Map<FoundationId, HTMLElement>();
+  for (const foundationId of FOUNDATION_IDS) {
+    const label = board.querySelector(`[data-pile-id="${foundationId}"] .slot-label`);
+    if (!(label instanceof HTMLElement)) {
+      throw new Error(`missing label element for "${foundationId}"`);
+    }
+    labels.set(foundationId, label);
+  }
+  return labels;
 }
 
 /** Resolves a CSS length variable to pixels by measuring a probe element. */

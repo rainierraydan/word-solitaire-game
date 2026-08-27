@@ -45,11 +45,31 @@ body {
 }
 
 .slot {
+  position: relative;
   box-sizing: border-box;
   width: var(--card-w);
   height: var(--card-h);
   border: 1px solid var(--slot-border);
   border-radius: calc(var(--card-w) * 0.08);
+}
+
+/* Category name + filed/total counter, painted above the stacked cards. */
+.slot-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 1px 2px;
+  border-radius: calc(var(--card-w) * 0.08) calc(var(--card-w) * 0.08) 0 0;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  font-size: max(calc(var(--card-w) * 0.15), 7px);
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+  pointer-events: none;
 }
 
 /* The translate property composes with transform, so a positioned card

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Category } from '../data/categories';
 import type { ActionResult } from './actions';
 import { buildDeck } from './deal';
-import { routeCardTap, routePileTap } from './route';
+import { canPickCard, routeCardTap, routeDrop, routePileTap } from './route';
 import { createEmptyState, type State } from './state';
 
 const FIXTURE: Category[] = [
@@ -117,5 +117,51 @@ describe('routePileTap', () => {
     expect(expectInvalid(routePileTap(state, 'foundation-0'))).toMatch(/nothing to play/);
     expect(expectInvalid(routePileTap(state, 'tableau-0'))).toMatch(/nothing to play/);
     expect(expectInvalid(routePileTap(state, 'waste'))).toMatch(/nothing to play/);
+  });
+});
+
+describe('canPickCard', () => {
+  it('allows only waste and tableau tops', () => {
+    const state = makeState();
+    state.piles.waste = ['word:a:a1', 'word:a:a2'];
+    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2'];
+    state.piles.stock = ['word:b:b3'];
+    state.piles['foundation-0'] = ['category:a'];
+    expect(canPickCard(state, 'word:a:a2')).toBe(true);
+    expect(canPickCard(state, 'word:b:b2')).toBe(true);
+    expect(canPickCard(state, 'word:a:a1')).toBe(false); // covered in waste
+    expect(canPickCard(state, 'word:b:b1')).toBe(false); // covered in tableau
+    expect(canPickCard(state, 'word:b:b3')).toBe(false); // stock
+    expect(canPickCard(state, 'category:a')).toBe(false); // foundation
+    expect(canPickCard(state, 'category:b')).toBe(false); // not in any pile
+  });
+});
+
+describe('routeDrop', () => {
+  it('drops onto foundations and columns through the rule actions', () => {
+    const state = makeState();
+    state.piles['foundation-0'] = ['category:a'];
+    state.piles.waste = ['word:a:a1'];
+    state.piles['tableau-0'] = ['word:b:b1'];
+    state.piles['tableau-1'] = ['word:b:b2'];
+    state.faceUp = new Set(['word:a:a1', 'word:b:b1', 'word:b:b2']);
+
+    const filed = expectOk(routeDrop(state, 'word:a:a1', 'foundation-0'));
+    expect(filed.piles['foundation-0']).toEqual(['category:a', 'word:a:a1']);
+
+    const stacked = expectOk(routeDrop(state, 'word:b:b2', 'tableau-0'));
+    expect(stacked.piles['tableau-0']).toEqual(['word:b:b1', 'word:b:b2']);
+  });
+
+  it('rejects mismatched foundations, mismatched stacks, and non-play piles', () => {
+    const state = makeState();
+    state.piles['foundation-0'] = ['category:a'];
+    state.piles['tableau-0'] = ['word:a:a2'];
+    state.piles['tableau-1'] = ['word:b:b1'];
+    state.faceUp = new Set(['word:a:a2', 'word:b:b1']);
+    expect(expectInvalid(routeDrop(state, 'word:b:b1', 'foundation-0'))).toMatch(/open for "a"/);
+    expect(expectInvalid(routeDrop(state, 'word:b:b1', 'tableau-0'))).toMatch(/only takes cards/);
+    expect(expectInvalid(routeDrop(state, 'word:b:b1', 'stock'))).toMatch(/cannot be dropped/);
+    expect(expectInvalid(routeDrop(state, 'word:b:b1', 'waste'))).toMatch(/cannot be dropped/);
   });
 });

@@ -1,8 +1,8 @@
 ---
 id: T-025
 title: Drag-and-drop enhancement
-status: ready
-depends_on: [T-019]
+status: done
+depends_on: [T-019, T-030]
 blocks: []
 estimate: L
 area: interaction

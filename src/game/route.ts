@@ -1,7 +1,7 @@
 import {
   drawFromStock,
   invalid,
-  moveToEmptyColumn,
+  moveToColumn,
   playToFoundation,
   recycleWaste,
   type ActionResult,
@@ -9,6 +9,7 @@ import {
 import {
   findPile,
   FOUNDATION_IDS,
+  isFoundationId,
   isPileEmpty,
   isTableauId,
   openCategoryId,
@@ -46,7 +47,7 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
 
   if (isTableauId(pile)) {
     const emptyColumn = TABLEAU_IDS.find((id) => isPileEmpty(state, id));
-    if (emptyColumn !== undefined) return moveToEmptyColumn(state, cardId, emptyColumn);
+    if (emptyColumn !== undefined) return moveToColumn(state, cardId, emptyColumn);
   }
   return invalid('no legal destination');
 }
@@ -55,4 +56,18 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
 export function routePileTap(state: State, pileId: PileId): ActionResult {
   if (pileId === 'stock') return recycleWaste(state);
   return invalid('nothing to play here');
+}
+
+/** Whether a card can be lifted for a drag: top of the waste or of a tableau column. */
+export function canPickCard(state: State, cardId: CardId): boolean {
+  const pile = findPile(state, cardId);
+  if (pile === undefined || (!isTableauId(pile) && pile !== 'waste')) return false;
+  return topCard(state, pile) === cardId;
+}
+
+/** Routes a drop onto a specific pile through the same actions the tap router uses. */
+export function routeDrop(state: State, cardId: CardId, target: PileId): ActionResult {
+  if (isFoundationId(target)) return playToFoundation(state, cardId, target);
+  if (isTableauId(target)) return moveToColumn(state, cardId, target);
+  return invalid('cards cannot be dropped there');
 }

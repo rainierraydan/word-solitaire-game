@@ -64,11 +64,13 @@ Gotchas, pointers, constraints.
 | T-022 | Win animation — canvas overlay                       | ready   | polish      | T-011, T-016                      |
 | T-023 | localStorage persistence with payload validation     | ready   | infra       | T-018, T-019                      |
 | T-024 | Desktop keyboard support                             | ready   | interaction | T-018                             |
-| T-025 | Drag-and-drop enhancement                            | ready   | interaction | T-019                             |
+| T-025 | Drag-and-drop enhancement                            | done    | interaction | T-019, T-030                      |
 | T-026 | PWA manifest and icons                               | ready   | infra       | T-016                             |
 | T-027 | Vercel deployment                                    | in-progress | infra       | T-018, T-019                      |
 | T-028 | Rules and validator test suite                       | ready   | state       | T-004, T-007, T-008, T-010, T-011 |
 | T-029 | Real content authoring                               | ready   | data        | T-004, T-020                      |
+| T-030 | Tableau same-category stacking rule                  | done    | state       | T-010                             |
+| T-031 | Foundation category label and progress counter      | done    | layout      | T-015                             |
 
 ## Dependency graph
 
@@ -99,6 +101,7 @@ graph LR
     T010[T-010 tableau actions]
     T011[T-011 win detection]
     T028[T-028 rules test suite]
+    T030[T-030 tableau stacking]
   end
   subgraph ui
     T012[T-012 board shell]
@@ -106,6 +109,7 @@ graph LR
     T014[T-014 layout fn]
     T015[T-015 render fn]
     T020[T-020 legibility]
+    T031[T-031 foundation label]
   end
   subgraph interaction
     T017[T-017 pointer input]
@@ -144,6 +148,8 @@ graph LR
   T009 --> T011
   T009 --> T019
   T010 --> T019
+  T010 --> T030
+  T030 --> T025
   T010 --> T028
   T011 --> T022
   T011 --> T028
@@ -153,6 +159,7 @@ graph LR
   T013 --> T020
   T014 --> T015
   T015 --> T016
+  T015 --> T031
   T016 --> T017
   T016 --> T021
   T016 --> T022

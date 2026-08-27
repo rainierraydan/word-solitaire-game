@@ -52,6 +52,12 @@
   font-weight: 600;
 }
 
+/* While dragged: follow the pointer instantly and let drops hit what is underneath. */
+.card.dragging {
+  transition: none;
+  pointer-events: none;
+}
+
 /* Cards of completed categories leave the board. */
 .card.off-board {
   opacity: 0;
