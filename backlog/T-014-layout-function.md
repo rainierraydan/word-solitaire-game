@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: layout(state) — logical piles to pixel positions
-status: ready
+status: done
 depends_on: [T-006, T-012]
 blocks: [T-015]
 estimate: M

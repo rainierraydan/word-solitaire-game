@@ -50,11 +50,11 @@ Gotchas, pointers, constraints.
 | T-008 | Stock/waste actions — draw and reshuffle-recycle     | done    | state       | T-005, T-006                      |
 | T-009 | Foundation actions — open, file, complete, release   | done    | state       | T-006                             |
 | T-010 | Tableau actions — reveal, empty-column move          | done    | state       | T-006                             |
-| T-011 | Win detection                                        | ready   | state       | T-009                             |
+| T-011 | Win detection                                        | done    | state       | T-009                             |
 | T-012 | Board shell — regions, sizing, responsive fit        | done    | layout      | T-002                             |
-| T-013 | Card DOM structure and CSS, including the flip       | ready   | layout      | T-006, T-012                      |
-| T-014 | layout(state) — piles to pixel positions             | ready   | layout      | T-006, T-012                      |
-| T-015 | render(state) — full, idempotent DOM writes          | blocked | layout      | T-013, T-014                      |
+| T-013 | Card DOM structure and CSS, including the flip       | done    | layout      | T-006, T-012                      |
+| T-014 | layout(state) — piles to pixel positions             | done    | layout      | T-006, T-012                      |
+| T-015 | render(state) — full, idempotent DOM writes          | ready   | layout      | T-013, T-014                      |
 | T-016 | Boot wiring — validate, seed, deal, first paint      | blocked | infra       | T-004, T-007, T-015               |
 | T-017 | Pointer input layer and tap detection                | blocked | interaction | T-016                             |
 | T-018 | Stock and waste interaction                          | blocked | interaction | T-008, T-017                      |
@@ -67,7 +67,7 @@ Gotchas, pointers, constraints.
 | T-025 | Drag-and-drop enhancement                            | blocked | interaction | T-019                             |
 | T-026 | PWA manifest and icons                               | blocked | infra       | T-016                             |
 | T-027 | Vercel deployment                                    | blocked | infra       | T-018, T-019                      |
-| T-028 | Rules and validator test suite                       | blocked | state       | T-004, T-007, T-008, T-010, T-011 |
+| T-028 | Rules and validator test suite                       | ready   | state       | T-004, T-007, T-008, T-010, T-011 |
 | T-029 | Real content authoring                               | blocked | data        | T-004, T-020                      |
 
 ## Dependency graph

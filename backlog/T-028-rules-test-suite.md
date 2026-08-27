@@ -1,7 +1,7 @@
 ---
 id: T-028
 title: Rules and validator test suite — playthrough and invariants
-status: blocked
+status: ready
 depends_on: [T-004, T-007, T-008, T-010, T-011]
 blocks: []
 estimate: M
