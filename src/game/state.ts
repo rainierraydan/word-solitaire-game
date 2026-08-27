@@ -101,3 +101,28 @@ export function openCategoryId(state: State, foundationId: FoundationId): string
   if (bottom === undefined) return undefined;
   return state.cards[bottom]?.categoryId;
 }
+
+/** Word cards a category holds, derived from the deck at runtime. */
+export function countWords(state: State, categoryId: string): number {
+  return Object.values(state.cards).filter(
+    (card) => card.kind === 'word' && card.categoryId === categoryId,
+  ).length;
+}
+
+export type FoundationProgress = { name: string; filed: number; total: number };
+
+/** Display data for an open foundation: category name plus filed/total words. */
+export function foundationProgress(
+  state: State,
+  foundationId: FoundationId,
+): FoundationProgress | undefined {
+  const bottom = state.piles[foundationId][0];
+  if (bottom === undefined) return undefined;
+  const category = state.cards[bottom];
+  if (category === undefined) return undefined;
+  return {
+    name: category.label,
+    filed: state.piles[foundationId].length - 1,
+    total: countWords(state, category.categoryId),
+  };
+}

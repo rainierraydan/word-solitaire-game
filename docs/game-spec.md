@@ -79,9 +79,12 @@ Runs at boot and as a unit test. Fails loudly and legibly on:
 
 - Only the top card of a column may be played.
 - When a face-up card leaves and reveals a face-down card, that card flips face-up.
-- **No sequencing rule** — no colors, no ranks. The tableau is storage to be excavated.
-- A single card may be moved onto an **empty column**. This is the only tableau-to-tableau move:
-  a limited escape valve so a card buried under a mismatched one cannot deadlock the game.
+- **No rank or color sequencing** — the tableau is storage to be excavated.
+- A single tableau top card may move onto an **empty column** (any card — the escape valve
+  against burying) or onto a column whose face-up top card belongs to the **same category**
+  (word or category card), so a group can be gathered below before its foundation opens
+  (decision 2026-08-27, superseding the empty-column-only rule). The waste is never a source
+  for tableau moves.
 
 ### Stock
 

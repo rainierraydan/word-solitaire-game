@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Category } from '../data/categories';
 import {
   drawFromStock,
-  moveToEmptyColumn,
+  moveToColumn,
   playToFoundation,
   recycleWaste,
   type ActionResult,
@@ -201,14 +201,14 @@ describe('playToFoundation', () => {
   });
 });
 
-describe('moveToEmptyColumn', () => {
+describe('moveToColumn', () => {
   it('moves a top tableau card to an empty column and reveals the card underneath', () => {
     const state = makeState();
     state.piles['tableau-0'] = ['word:b:b1', 'word:a:a1'];
     state.faceUp = new Set(['word:a:a1']);
     const before = serializeState(state);
 
-    const next = expectOk(moveToEmptyColumn(state, 'word:a:a1', 'tableau-3'));
+    const next = expectOk(moveToColumn(state, 'word:a:a1', 'tableau-3'));
     expect(next.piles['tableau-0']).toEqual(['word:b:b1']);
     expect(next.piles['tableau-3']).toEqual(['word:a:a1']);
     expect(next.faceUp.has('word:b:b1')).toBe(true);
@@ -219,21 +219,69 @@ describe('moveToEmptyColumn', () => {
     const state = makeState();
     state.piles.waste = ['word:a:a1'];
     state.piles.stock = ['word:a:a2'];
-    expect(expectInvalid(moveToEmptyColumn(state, 'word:a:a1', 'tableau-0'))).toMatch(
+    expect(expectInvalid(moveToColumn(state, 'word:a:a1', 'tableau-0'))).toMatch(
       /only tableau cards/,
     );
-    expect(expectInvalid(moveToEmptyColumn(state, 'word:a:a2', 'tableau-0'))).toMatch(
+    expect(expectInvalid(moveToColumn(state, 'word:a:a2', 'tableau-0'))).toMatch(
       /only tableau cards/,
     );
   });
 
-  it('rejects covered cards and non-empty target columns', () => {
+  it('rejects covered cards and different-category target columns', () => {
     const state = makeState();
     state.piles['tableau-0'] = ['word:a:a1', 'word:a:a2'];
     state.piles['tableau-1'] = ['word:b:b1'];
-    expect(expectInvalid(moveToEmptyColumn(state, 'word:a:a1', 'tableau-2'))).toMatch(/covered/);
-    expect(expectInvalid(moveToEmptyColumn(state, 'word:a:a2', 'tableau-1'))).toMatch(
-      /not empty/,
+    state.faceUp = new Set(['word:a:a2', 'word:b:b1']);
+    expect(expectInvalid(moveToColumn(state, 'word:a:a1', 'tableau-2'))).toMatch(/covered/);
+    expect(expectInvalid(moveToColumn(state, 'word:a:a2', 'tableau-1'))).toMatch(
+      /only takes cards of its top card's category/,
     );
+  });
+
+  it('stacks a word onto a same-category top card without an open foundation', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1'];
+    state.piles['tableau-1'] = ['word:b:b2'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
+    const next = expectOk(moveToColumn(state, 'word:b:b2', 'tableau-0'));
+    expect(next.piles['tableau-0']).toEqual(['word:b:b1', 'word:b:b2']);
+    expect(next.piles['tableau-1']).toEqual([]);
+  });
+
+  it('stacks a word onto its own category card and reveals under the source', () => {
+    const state = makeState();
+    state.piles['tableau-2'] = ['category:a'];
+    state.piles['tableau-4'] = ['word:b:b3', 'word:a:a1'];
+    state.faceUp = new Set(['category:a', 'word:a:a1']);
+    const next = expectOk(moveToColumn(state, 'word:a:a1', 'tableau-2'));
+    expect(next.piles['tableau-2']).toEqual(['category:a', 'word:a:a1']);
+    expect(next.faceUp.has('word:b:b3')).toBe(true);
+  });
+
+  it('rejects stacking onto a face-down top card even of the same category', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1'];
+    state.piles['tableau-1'] = ['word:b:b2'];
+    state.faceUp = new Set(['word:b:b2']); // target top face-down
+    expect(expectInvalid(moveToColumn(state, 'word:b:b2', 'tableau-0'))).toMatch(
+      /only takes cards of its top card's category/,
+    );
+  });
+
+  it('rejects the waste as a source even with a matching stack available', () => {
+    const state = makeState();
+    state.piles.waste = ['word:b:b1'];
+    state.piles['tableau-0'] = ['word:b:b2'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
+    expect(expectInvalid(moveToColumn(state, 'word:b:b1', 'tableau-0'))).toMatch(
+      /only tableau cards/,
+    );
+  });
+
+  it('rejects moving a card onto its own column', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1'];
+    state.faceUp = new Set(['word:b:b1']);
+    expect(expectInvalid(moveToColumn(state, 'word:b:b1', 'tableau-0'))).toMatch(/already on/);
   });
 });

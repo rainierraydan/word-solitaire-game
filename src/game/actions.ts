@@ -1,5 +1,6 @@
 import { shuffle } from './rng';
 import {
+  countWords,
   findPile,
   isTableauId,
   openCategoryId,
@@ -81,12 +82,6 @@ function playableSource(state: State, cardId: CardId): { pile: PileId } | { erro
   return { pile: source };
 }
 
-function wordCount(state: State, categoryId: string): number {
-  return Object.values(state.cards).filter(
-    (card) => card.kind === 'word' && card.categoryId === categoryId,
-  ).length;
-}
-
 export function playToFoundation(
   state: State,
   cardId: CardId,
@@ -116,7 +111,7 @@ export function playToFoundation(
   revealTop(next, source.pile);
 
   const filedWords = next.piles[foundationId].length - 1;
-  if (card.kind === 'word' && filedWords === wordCount(next, card.categoryId)) {
+  if (card.kind === 'word' && filedWords === countWords(next, card.categoryId)) {
     for (const id of next.piles[foundationId]) {
       next.faceUp.delete(id);
     }
@@ -126,21 +121,37 @@ export function playToFoundation(
   return { ok: true, state: next };
 }
 
-export function moveToEmptyColumn(
-  state: State,
-  cardId: CardId,
-  columnId: TableauId,
-): ActionResult {
+/**
+ * Moves a tableau top card onto another column: an empty column takes any
+ * card (the escape valve); a non-empty one only a card of the same category
+ * as its face-up top (word or category card).
+ */
+export function moveToColumn(state: State, cardId: CardId, columnId: TableauId): ActionResult {
   const source = findPile(state, cardId);
   if (source === undefined || !isTableauId(source)) {
-    return invalid('only tableau cards can move to an empty column');
+    return invalid('only tableau cards can move to a column');
+  }
+  if (source === columnId) {
+    return invalid('card is already on that column');
   }
   if (topCard(state, source) !== cardId) {
     return invalid(`card "${cardId}" is covered`);
   }
-  if (state.piles[columnId].length > 0) {
-    return invalid(`column "${columnId}" is not empty`);
+
+  const targetTop = topCard(state, columnId);
+  if (targetTop !== undefined) {
+    const moving = state.cards[cardId];
+    const resting = state.cards[targetTop];
+    const sameCategory =
+      moving !== undefined &&
+      resting !== undefined &&
+      state.faceUp.has(targetTop) &&
+      moving.categoryId === resting.categoryId;
+    if (!sameCategory) {
+      return invalid(`column "${columnId}" only takes cards of its top card's category`);
+    }
   }
+
   const next = cloneState(state);
   next.piles[source].pop();
   next.piles[columnId].push(cardId);

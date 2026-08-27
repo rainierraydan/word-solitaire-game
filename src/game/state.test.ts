@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  countWords,
   createEmptyState,
   deserializeState,
+  foundationProgress,
   isPileEmpty,
   openCategoryId,
   PILE_IDS,
@@ -77,5 +79,23 @@ describe('selectors', () => {
     const state = makeState();
     expect(openCategoryId(state, 'foundation-0')).toBe('fruits');
     expect(openCategoryId(state, 'foundation-1')).toBeUndefined();
+  });
+
+  it('countWords derives per-category totals from the deck, uneven counts included', () => {
+    const state = makeState();
+    state.cards['word:red'] = makeCard('word:red', 'word', 'colors');
+    expect(countWords(state, 'fruits')).toBe(2);
+    expect(countWords(state, 'colors')).toBe(1);
+    expect(countWords(state, 'unknown')).toBe(0);
+  });
+
+  it('foundationProgress reports name and filed/total for open foundations only', () => {
+    const state = makeState();
+    expect(foundationProgress(state, 'foundation-0')).toEqual({
+      name: 'cat:fruits',
+      filed: 1,
+      total: 2,
+    });
+    expect(foundationProgress(state, 'foundation-1')).toBeUndefined();
   });
 });
