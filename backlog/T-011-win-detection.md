@@ -1,7 +1,7 @@
 ---
 id: T-011
 title: Win detection
-status: ready
+status: done
 depends_on: [T-009]
 blocks: [T-022, T-028]
 estimate: S
