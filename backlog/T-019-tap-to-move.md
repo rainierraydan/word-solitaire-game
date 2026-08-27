@@ -1,7 +1,7 @@
 ---
 id: T-019
 title: Tap-to-move routing and invalid-move feedback
-status: blocked
+status: done
 depends_on: [T-009, T-010, T-017]
 blocks: [T-023, T-025, T-027]
 estimate: M

@@ -82,6 +82,10 @@ export function deserializeState(json: string): State {
   return { ...parsed, faceUp: new Set(parsed.faceUp) };
 }
 
+export function findPile(state: State, cardId: CardId): PileId | undefined {
+  return PILE_IDS.find((pileId) => state.piles[pileId].includes(cardId));
+}
+
 export function topCard(state: State, pileId: PileId): CardId | undefined {
   const pile = state.piles[pileId];
   return pile[pile.length - 1];

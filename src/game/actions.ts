@@ -1,5 +1,6 @@
 import { shuffle } from './rng';
 import {
+  findPile,
   isTableauId,
   openCategoryId,
   PILE_IDS,
@@ -13,7 +14,7 @@ import {
 
 export type ActionResult = { ok: true; state: State } | { ok: false; reason: string };
 
-function invalid(reason: string): ActionResult {
+export function invalid(reason: string): ActionResult {
   return { ok: false, reason };
 }
 
@@ -27,10 +28,6 @@ function cloneState(state: State): State {
     rngState: state.rngState,
     completedCategoryIds: [...state.completedCategoryIds],
   };
-}
-
-function findPile(state: State, cardId: CardId): PileId | undefined {
-  return PILE_IDS.find((pileId) => state.piles[pileId].includes(cardId));
 }
 
 /** Flips the newly exposed top card of a tableau column face-up. */

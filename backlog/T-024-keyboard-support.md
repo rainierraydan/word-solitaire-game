@@ -1,7 +1,7 @@
 ---
 id: T-024
 title: Desktop keyboard support
-status: blocked
+status: ready
 depends_on: [T-018]
 blocks: []
 estimate: S

@@ -1,7 +1,7 @@
 ---
 id: T-025
 title: Drag-and-drop enhancement
-status: blocked
+status: ready
 depends_on: [T-019]
 blocks: []
 estimate: L

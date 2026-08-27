@@ -1,7 +1,7 @@
 ---
 id: T-023
 title: localStorage persistence with payload validation
-status: blocked
+status: ready
 depends_on: [T-018, T-019]
 blocks: []
 estimate: M

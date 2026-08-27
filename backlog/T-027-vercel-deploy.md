@@ -1,7 +1,7 @@
 ---
 id: T-027
 title: Vercel deployment
-status: blocked
+status: ready
 depends_on: [T-018, T-019]
 blocks: []
 estimate: S

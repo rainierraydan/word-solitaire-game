@@ -1,7 +1,7 @@
 ---
 id: T-018
 title: Stock and waste interaction
-status: blocked
+status: done
 depends_on: [T-008, T-017]
 blocks: [T-023, T-024, T-027]
 estimate: S
