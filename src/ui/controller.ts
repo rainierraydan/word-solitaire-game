@@ -1,6 +1,6 @@
 import type { ActionResult } from '../game/actions';
 import { canPickCard, routeCardTap, routeDrop, routePileTap } from '../game/route';
-import { findPile, PILE_IDS, type CardId, type PileId, type State } from '../game/state';
+import { findPile, PILE_IDS, tableauRun, type CardId, type PileId, type State } from '../game/state';
 import { shake } from './feedback';
 import { attachPointerInput, type TapTarget } from './input';
 
@@ -19,7 +19,8 @@ type ControllerArgs = {
  */
 export function attachGameController(args: ControllerArgs): void {
   const { board, cardEls, getState, setState, repaint } = args;
-  let grabOffset = { x: 0, y: 0 };
+  // The dragged run: each element with its offset from the pointer at grab time.
+  let lifted: { el: HTMLElement; dx: number; dy: number }[] = [];
 
   const apply = (result: ActionResult, feedbackEl: HTMLElement | undefined): void => {
     if (result.ok) {
@@ -62,40 +63,49 @@ export function attachGameController(args: ControllerArgs): void {
     },
 
     onDragStart: (cardId, x, y) => {
-      if (!canPickCard(getState(), cardId)) return false;
-      const el = cardEls.get(cardId);
-      if (el === undefined) return false;
-      const rect = el.getBoundingClientRect();
-      grabOffset = { x: x - rect.left, y: y - rect.top };
-      el.classList.add('dragging');
-      el.style.zIndex = '1000';
+      const state = getState();
+      if (!canPickCard(state, cardId)) return false;
+      const run = tableauRun(state, cardId) ?? [cardId];
+      const els = run
+        .map((id) => cardEls.get(id))
+        .filter((el): el is HTMLElement => el !== undefined);
+      if (els.length !== run.length) return false;
+      lifted = els.map((el, i) => {
+        const rect = el.getBoundingClientRect();
+        el.classList.add('dragging');
+        el.style.zIndex = String(1000 + i);
+        return { el, dx: rect.left - x, dy: rect.top - y };
+      });
       return true;
     },
 
-    onDragMove: (cardId, x, y) => {
-      const el = cardEls.get(cardId);
-      if (el === undefined) return;
+    onDragMove: (_cardId, x, y) => {
       const origin = board.getBoundingClientRect();
-      const tx = x - origin.left - grabOffset.x;
-      const ty = y - origin.top - grabOffset.y;
-      el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+      for (const { el, dx, dy } of lifted) {
+        el.style.transform = `translate3d(${x + dx - origin.left}px, ${y + dy - origin.top}px, 0)`;
+      }
     },
 
     onDrop: (cardId, x, y) => {
       // Resolve the target before lifting the dragging class: the dragged
-      // card ignores pointer events, so elementFromPoint sees what is under it.
+      // cards ignore pointer events, so elementFromPoint sees what is under them.
       const target = dropTargetAt(x, y);
-      const el = cardEls.get(cardId);
-      el?.classList.remove('dragging');
+      for (const { el } of lifted) {
+        el.classList.remove('dragging');
+      }
+      lifted = [];
       const result =
         target === undefined
           ? ({ ok: false, reason: 'no drop target' } as const)
           : routeDrop(getState(), cardId, target);
-      apply(result, el);
+      apply(result, cardEls.get(cardId));
     },
 
-    onDragCancel: (cardId) => {
-      cardEls.get(cardId)?.classList.remove('dragging');
+    onDragCancel: () => {
+      for (const { el } of lifted) {
+        el.classList.remove('dragging');
+      }
+      lifted = [];
       repaint();
     },
   });

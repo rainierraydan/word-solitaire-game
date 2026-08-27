@@ -128,6 +128,7 @@ describe('playToFoundation', () => {
     state.piles['foundation-0'] = ['category:a'];
     state.piles.waste = ['word:b:b1'];
     state.piles['tableau-0'] = ['category:b'];
+    state.faceUp = new Set(['word:b:b1', 'category:b']);
     expect(expectInvalid(playToFoundation(state, 'word:b:b1', 'foundation-0'))).toMatch(
       /open for "a"/,
     );
@@ -283,5 +284,63 @@ describe('moveToColumn', () => {
     state.piles['tableau-0'] = ['word:b:b1'];
     state.faceUp = new Set(['word:b:b1']);
     expect(expectInvalid(moveToColumn(state, 'word:b:b1', 'tableau-0'))).toMatch(/already on/);
+  });
+
+  it('moves a whole same-category run preserving order', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:a:a1', 'word:b:b1', 'word:b:b2'];
+    state.piles['tableau-1'] = ['word:b:b3'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2', 'word:b:b3']);
+    const next = expectOk(moveToColumn(state, 'word:b:b1', 'tableau-1'));
+    expect(next.piles['tableau-1']).toEqual(['word:b:b3', 'word:b:b1', 'word:b:b2']);
+    expect(next.piles['tableau-0']).toEqual(['word:a:a1']);
+    expect(next.faceUp.has('word:a:a1')).toBe(true); // revealed under the run
+  });
+
+  it('rejects lifting a card covered by another category', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1', 'word:a:a1'];
+    state.faceUp = new Set(['word:b:b1', 'word:a:a1']);
+    expect(expectInvalid(moveToColumn(state, 'word:b:b1', 'tableau-2'))).toMatch(/covered/);
+  });
+});
+
+describe('playToFoundation with runs', () => {
+  it('files a whole word run onto its open foundation and completes atomically', () => {
+    const state = makeState();
+    state.piles['foundation-0'] = ['category:b'];
+    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2', 'word:b:b3'];
+    state.faceUp = new Set(state.piles['tableau-0']);
+    const next = expectOk(playToFoundation(state, 'word:b:b1', 'foundation-0'));
+    expect(next.piles['foundation-0']).toEqual([]); // 3/3 filed → completed
+    expect(next.completedCategoryIds).toEqual(['b']);
+    expect(next.piles['tableau-0']).toEqual([]);
+  });
+
+  it('opens an empty slot with a run holding the category card, category first', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:a:a1', 'category:a'];
+    state.faceUp = new Set(['word:a:a1', 'category:a']);
+    const next = expectOk(playToFoundation(state, 'word:a:a1', 'foundation-1'));
+    expect(next.piles['foundation-1']).toEqual(['category:a', 'word:a:a1']);
+  });
+
+  it('rejects a run with the category card on an open foundation', () => {
+    const state = makeState();
+    state.piles['foundation-0'] = ['category:a'];
+    state.piles['tableau-0'] = ['category:b', 'word:b:b1'];
+    state.faceUp = new Set(['category:b', 'word:b:b1']);
+    expect(expectInvalid(playToFoundation(state, 'category:b', 'foundation-0'))).toMatch(
+      /open for "a"/,
+    );
+  });
+
+  it('rejects a word-only run on an empty slot', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
+    expect(expectInvalid(playToFoundation(state, 'word:b:b1', 'foundation-0'))).toMatch(
+      /empty slot accepts only a category card/,
+    );
   });
 });

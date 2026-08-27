@@ -14,6 +14,7 @@ import {
   isTableauId,
   openCategoryId,
   TABLEAU_IDS,
+  tableauRun,
   topCard,
   type CardId,
   type PileId,
@@ -21,9 +22,10 @@ import {
 } from './state';
 
 /**
- * Routes a tapped card to its best legal destination, deterministically:
- * matching open foundation > leftmost empty foundation slot (category cards) >
- * leftmost empty tableau column (tableau sources only).
+ * Routes a tapped card — or the tableau run it heads — to its best legal
+ * destination, deterministically: matching open foundation > leftmost empty
+ * foundation slot (runs holding the category card) > leftmost empty tableau
+ * column (tableau sources only).
  */
 export function routeCardTap(state: State, cardId: CardId): ActionResult {
   const pile = findPile(state, cardId);
@@ -35,14 +37,22 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
   if (!isTableauId(pile) && pile !== 'waste') {
     return invalid('cards on a foundation cannot be moved');
   }
-  if (topCard(state, pile) !== cardId) return invalid('card is covered');
 
-  if (card.kind === 'word') {
-    const open = FOUNDATION_IDS.find((id) => openCategoryId(state, id) === card.categoryId);
-    if (open !== undefined) return playToFoundation(state, cardId, open);
-  } else {
+  let holdsCategoryCard = card.kind === 'category';
+  if (isTableauId(pile)) {
+    const run = tableauRun(state, cardId);
+    if (run === undefined) return invalid('card is covered');
+    holdsCategoryCard = run.some((id) => state.cards[id]?.kind === 'category');
+  } else if (topCard(state, 'waste') !== cardId) {
+    return invalid('card is covered');
+  }
+
+  if (holdsCategoryCard) {
     const empty = FOUNDATION_IDS.find((id) => isPileEmpty(state, id));
     if (empty !== undefined) return playToFoundation(state, cardId, empty);
+  } else {
+    const open = FOUNDATION_IDS.find((id) => openCategoryId(state, id) === card.categoryId);
+    if (open !== undefined) return playToFoundation(state, cardId, open);
   }
 
   if (isTableauId(pile)) {
@@ -58,11 +68,12 @@ export function routePileTap(state: State, pileId: PileId): ActionResult {
   return invalid('nothing to play here');
 }
 
-/** Whether a card can be lifted for a drag: top of the waste or of a tableau column. */
+/** Whether a card can be lifted for a drag: the waste top, or the head of a tableau run. */
 export function canPickCard(state: State, cardId: CardId): boolean {
   const pile = findPile(state, cardId);
-  if (pile === undefined || (!isTableauId(pile) && pile !== 'waste')) return false;
-  return topCard(state, pile) === cardId;
+  if (pile === 'waste') return topCard(state, 'waste') === cardId;
+  if (pile !== undefined && isTableauId(pile)) return tableauRun(state, cardId) !== undefined;
+  return false;
 }
 
 /** Routes a drop onto a specific pile through the same actions the tap router uses. */

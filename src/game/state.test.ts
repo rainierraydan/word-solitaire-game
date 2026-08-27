@@ -8,6 +8,7 @@ import {
   openCategoryId,
   PILE_IDS,
   serializeState,
+  tableauRun,
   topCard,
   type Card,
   type State,
@@ -87,6 +88,29 @@ describe('selectors', () => {
     expect(countWords(state, 'fruits')).toBe(2);
     expect(countWords(state, 'colors')).toBe(1);
     expect(countWords(state, 'unknown')).toBe(0);
+  });
+
+  it('tableauRun returns the same-category face-up slice to the top, or undefined', () => {
+    const state = makeState();
+    state.cards['word:papaya'] = makeCard('word:papaya', 'word', 'fruits');
+    state.cards['word:red'] = makeCard('word:red', 'word', 'colors');
+    state.piles['foundation-0'] = [];
+    state.piles['tableau-2'] = ['word:red', 'word:fig', 'word:mango', 'word:papaya'];
+    state.faceUp = new Set(['word:fig', 'word:mango', 'word:papaya']);
+
+    expect(tableauRun(state, 'word:fig')).toEqual(['word:fig', 'word:mango', 'word:papaya']);
+    expect(tableauRun(state, 'word:mango')).toEqual(['word:mango', 'word:papaya']);
+    expect(tableauRun(state, 'word:red')).toBeUndefined(); // covered by another category
+    state.faceUp.delete('word:papaya');
+    expect(tableauRun(state, 'word:fig')).toBeUndefined(); // face-down card in the slice
+  });
+
+  it('tableauRun is undefined off the tableau', () => {
+    const state = makeState();
+    state.piles['foundation-0'] = [];
+    state.piles.waste = ['word:mango'];
+    state.piles['tableau-2'] = [];
+    expect(tableauRun(state, 'word:mango')).toBeUndefined();
   });
 
   it('foundationProgress reports name and filed/total for open foundations only', () => {

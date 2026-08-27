@@ -41,6 +41,7 @@ describe('routeCardTap', () => {
     state.piles['foundation-2'] = ['category:a'];
     state.piles.waste = ['word:a:a1'];
     state.piles['tableau-4'] = ['word:a:a2'];
+    state.faceUp = new Set(['word:a:a1', 'word:a:a2']);
 
     const fromWaste = expectOk(routeCardTap(state, 'word:a:a1'));
     expect(fromWaste.piles['foundation-2']).toEqual(['category:a', 'word:a:a1']);
@@ -76,6 +77,7 @@ describe('routeCardTap', () => {
     const state = makeState();
     state.piles['foundation-1'] = ['category:a'];
     state.piles['tableau-3'] = ['word:a:a1'];
+    state.faceUp = new Set(['word:a:a1']);
     const next = expectOk(routeCardTap(state, 'word:a:a1'));
     expect(next.piles['foundation-1']).toEqual(['category:a', 'word:a:a1']);
     expect(next.piles['tableau-0']).toEqual([]);
@@ -92,6 +94,7 @@ describe('routeCardTap', () => {
   it('is invalid when a word has no open foundation and no empty column', () => {
     const state = makeState();
     state.piles['tableau-0'] = ['word:a:a1'];
+    state.faceUp = new Set(['word:a:a1']);
     for (const id of ['tableau-1', 'tableau-2', 'tableau-3', 'tableau-4', 'tableau-5', 'tableau-6'] as const) {
       state.piles[id] = [`filler:${id}`];
     }
@@ -120,17 +123,55 @@ describe('routePileTap', () => {
   });
 });
 
+describe('routeCardTap on runs', () => {
+  it('routes a covered run head to the open foundation of its category', () => {
+    const state = makeState();
+    state.piles['foundation-1'] = ['category:b'];
+    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
+    const next = expectOk(routeCardTap(state, 'word:b:b1'));
+    expect(next.piles['foundation-1']).toEqual(['category:b', 'word:b:b1', 'word:b:b2']);
+  });
+
+  it('routes a run holding the category card to the leftmost empty slot', () => {
+    const state = makeState();
+    state.piles['foundation-0'] = ['category:b'];
+    state.piles['tableau-0'] = ['category:a', 'word:a:a1'];
+    state.faceUp = new Set(['category:a', 'word:a:a1']);
+    const next = expectOk(routeCardTap(state, 'category:a'));
+    expect(next.piles['foundation-1']).toEqual(['category:a', 'word:a:a1']);
+  });
+
+  it('still rejects cards covered by another category', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:a:a1', 'word:b:b1'];
+    state.faceUp = new Set(['word:a:a1', 'word:b:b1']);
+    expect(expectInvalid(routeCardTap(state, 'word:a:a1'))).toMatch(/covered/);
+  });
+});
+
 describe('canPickCard', () => {
-  it('allows only waste and tableau tops', () => {
+  it('allows the head of a same-category run, not a mixed cover', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2'];
+    state.piles['tableau-1'] = ['word:a:a1', 'word:b:b3'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2', 'word:a:a1', 'word:b:b3']);
+    expect(canPickCard(state, 'word:b:b1')).toBe(true);
+    expect(canPickCard(state, 'word:a:a1')).toBe(false);
+  });
+
+  it('allows only the waste top and tableau run heads', () => {
     const state = makeState();
     state.piles.waste = ['word:a:a1', 'word:a:a2'];
-    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2'];
+    state.piles['tableau-0'] = ['word:b:b1', 'word:a:a3'];
+    state.cards['word:a:a3'] = { id: 'word:a:a3', kind: 'word', categoryId: 'a', label: 'a3' };
     state.piles.stock = ['word:b:b3'];
     state.piles['foundation-0'] = ['category:a'];
+    state.faceUp = new Set(['word:a:a2', 'word:b:b1', 'word:a:a3']);
     expect(canPickCard(state, 'word:a:a2')).toBe(true);
-    expect(canPickCard(state, 'word:b:b2')).toBe(true);
+    expect(canPickCard(state, 'word:a:a3')).toBe(true);
     expect(canPickCard(state, 'word:a:a1')).toBe(false); // covered in waste
-    expect(canPickCard(state, 'word:b:b1')).toBe(false); // covered in tableau
+    expect(canPickCard(state, 'word:b:b1')).toBe(false); // covered by another category
     expect(canPickCard(state, 'word:b:b3')).toBe(false); // stock
     expect(canPickCard(state, 'category:a')).toBe(false); // foundation
     expect(canPickCard(state, 'category:b')).toBe(false); // not in any pile

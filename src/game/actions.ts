@@ -5,6 +5,7 @@ import {
   isTableauId,
   openCategoryId,
   PILE_IDS,
+  tableauRun,
   topCard,
   type CardId,
   type FoundationId,
@@ -70,24 +71,35 @@ export function recycleWaste(state: State): ActionResult {
   return { ok: true, state: next };
 }
 
-/** A card is playable only from the top of the waste or of a tableau column. */
-function playableSource(state: State, cardId: CardId): { pile: PileId } | { error: string } {
+/** The playable unit at a card: the waste top alone, or its tableau run. */
+function playableRun(state: State, cardId: CardId): { pile: PileId; run: CardId[] } | { error: string } {
   const source = findPile(state, cardId);
   if (source === undefined) return { error: `card "${cardId}" is not in any pile` };
   if (source === 'stock') return { error: 'cards cannot be played from the stock' };
   if (!isTableauId(source) && source !== 'waste') {
     return { error: 'cards on a foundation cannot be moved' };
   }
-  if (topCard(state, source) !== cardId) return { error: `card "${cardId}" is covered` };
-  return { pile: source };
+  if (source === 'waste') {
+    if (topCard(state, 'waste') !== cardId) return { error: `card "${cardId}" is covered` };
+    return { pile: source, run: [cardId] };
+  }
+  const run = tableauRun(state, cardId);
+  if (run === undefined) return { error: `card "${cardId}" is covered` };
+  return { pile: source, run };
 }
 
+/**
+ * Files a card — or a whole tableau run — onto a foundation. An empty slot
+ * needs the run to include the category card (which lands first); an open
+ * foundation takes only words of its category. Atomic: any illegal card in
+ * the run rejects the whole move.
+ */
 export function playToFoundation(
   state: State,
   cardId: CardId,
   foundationId: FoundationId,
 ): ActionResult {
-  const source = playableSource(state, cardId);
+  const source = playableRun(state, cardId);
   if ('error' in source) {
     return invalid(source.error);
   }
@@ -96,22 +108,26 @@ export function playToFoundation(
     return invalid(`unknown card "${cardId}"`);
   }
 
+  const categoryCards = source.run.filter((id) => state.cards[id]?.kind === 'category');
+  const words = source.run.filter((id) => state.cards[id]?.kind === 'word');
   const open = openCategoryId(state, foundationId);
-  if (open === undefined && card.kind !== 'category') {
+  if (open === undefined && categoryCards.length === 0) {
     return invalid('an empty slot accepts only a category card');
   }
-  if (open !== undefined && (card.kind !== 'word' || card.categoryId !== open)) {
+  if (open !== undefined && (categoryCards.length > 0 || card.categoryId !== open)) {
     return invalid(`foundation is open for "${open}"`);
   }
 
   const next = cloneState(state);
-  next.piles[source.pile].pop();
-  next.piles[foundationId].push(cardId);
-  next.faceUp.add(cardId);
+  next.piles[source.pile] = next.piles[source.pile].slice(0, -source.run.length);
+  next.piles[foundationId].push(...categoryCards, ...words);
+  for (const id of source.run) {
+    next.faceUp.add(id);
+  }
   revealTop(next, source.pile);
 
   const filedWords = next.piles[foundationId].length - 1;
-  if (card.kind === 'word' && filedWords === countWords(next, card.categoryId)) {
+  if (filedWords > 0 && filedWords === countWords(next, card.categoryId)) {
     for (const id of next.piles[foundationId]) {
       next.faceUp.delete(id);
     }
@@ -122,9 +138,9 @@ export function playToFoundation(
 }
 
 /**
- * Moves a tableau top card onto another column: an empty column takes any
- * card (the escape valve); a non-empty one only a card of the same category
- * as its face-up top (word or category card).
+ * Moves a tableau run onto another column: an empty column takes any run
+ * (the escape valve); a non-empty one only a run of the same category as its
+ * face-up top card (word or category card).
  */
 export function moveToColumn(state: State, cardId: CardId, columnId: TableauId): ActionResult {
   const source = findPile(state, cardId);
@@ -134,7 +150,8 @@ export function moveToColumn(state: State, cardId: CardId, columnId: TableauId):
   if (source === columnId) {
     return invalid('card is already on that column');
   }
-  if (topCard(state, source) !== cardId) {
+  const run = tableauRun(state, cardId);
+  if (run === undefined) {
     return invalid(`card "${cardId}" is covered`);
   }
 
@@ -153,8 +170,8 @@ export function moveToColumn(state: State, cardId: CardId, columnId: TableauId):
   }
 
   const next = cloneState(state);
-  next.piles[source].pop();
-  next.piles[columnId].push(cardId);
+  next.piles[source] = next.piles[source].slice(0, -run.length);
+  next.piles[columnId].push(...run);
   revealTop(next, source);
   return { ok: true, state: next };
 }

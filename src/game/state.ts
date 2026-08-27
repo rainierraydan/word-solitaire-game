@@ -86,6 +86,25 @@ export function findPile(state: State, cardId: CardId): PileId | undefined {
   return PILE_IDS.find((pileId) => state.piles[pileId].includes(cardId));
 }
 
+/**
+ * The consecutive same-category, face-up cards from cardId to the top of its
+ * tableau column — the unit that moves together. A playable top card is a run
+ * of one; undefined when the card is covered by another category, face-down,
+ * or not on the tableau.
+ */
+export function tableauRun(state: State, cardId: CardId): CardId[] | undefined {
+  const pile = findPile(state, cardId);
+  if (pile === undefined || !isTableauId(pile)) return undefined;
+  const categoryId = state.cards[cardId]?.categoryId;
+  if (categoryId === undefined) return undefined;
+  const column = state.piles[pile];
+  const run = column.slice(column.indexOf(cardId));
+  const coherent = run.every(
+    (id) => state.faceUp.has(id) && state.cards[id]?.categoryId === categoryId,
+  );
+  return coherent ? run : undefined;
+}
+
 export function topCard(state: State, pileId: PileId): CardId | undefined {
   const pile = state.piles[pileId];
   return pile[pile.length - 1];
