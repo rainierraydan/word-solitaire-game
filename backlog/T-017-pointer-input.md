@@ -1,7 +1,7 @@
 ---
 id: T-017
 title: Pointer input layer and tap detection
-status: ready
+status: done
 depends_on: [T-016]
 blocks: [T-018, T-019]
 estimate: M
