@@ -1,7 +1,7 @@
 ---
 id: T-029
 title: Real content authoring
-status: blocked
+status: ready
 depends_on: [T-004, T-020]
 blocks: []
 estimate: M

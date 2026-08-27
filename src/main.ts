@@ -6,16 +6,21 @@ import { createBoard, measureBoardMetrics } from './ui/board';
 import { createCardElements } from './ui/card';
 import { shake } from './ui/feedback';
 import { attachTapListener, type TapTarget } from './ui/input';
+import { createMenu } from './ui/menu';
 import { render } from './ui/render';
 
 const MAX_SEED = 0xffffffff;
+
+function randomSeed(): number {
+  return Math.floor(Math.random() * (MAX_SEED + 1));
+}
 
 function resolveSeed(search: string): number {
   const raw = new URLSearchParams(search).get('seed');
   if (raw !== null && /^\d+$/.test(raw) && Number(raw) <= MAX_SEED) {
     return Number(raw);
   }
-  return Math.floor(Math.random() * (MAX_SEED + 1));
+  return randomSeed();
 }
 
 function showBootError(root: HTMLElement, error: unknown): void {
@@ -42,6 +47,14 @@ function boot(root: HTMLElement): void {
   window.addEventListener('resize', () => {
     metrics = measureBoardMetrics(board);
     paint();
+  });
+
+  createMenu(board, {
+    getSeed: () => state.seed,
+    onNewDeal: () => {
+      state = deal(CATEGORIES, randomSeed());
+      paint();
+    },
   });
 
   attachTapListener(board, (target: TapTarget) => {

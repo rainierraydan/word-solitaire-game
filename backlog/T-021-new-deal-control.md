@@ -1,7 +1,7 @@
 ---
 id: T-021
 title: New-deal and settings control
-status: ready
+status: done
 depends_on: [T-016]
 blocks: []
 estimate: S

@@ -59,8 +59,8 @@ Gotchas, pointers, constraints.
 | T-017 | Pointer input layer and tap detection                | done    | interaction | T-016                             |
 | T-018 | Stock and waste interaction                          | done    | interaction | T-008, T-017                      |
 | T-019 | Tap-to-move routing and invalid-move feedback        | done    | interaction | T-009, T-010, T-017               |
-| T-020 | Card text legibility at ~48px width                  | blocked | layout      | T-003, T-013                      |
-| T-021 | New-deal and settings control                        | ready   | interaction | T-016                             |
+| T-020 | Card text legibility at ~48px width                  | done    | layout      | T-003, T-013                      |
+| T-021 | New-deal and settings control                        | done    | interaction | T-016                             |
 | T-022 | Win animation — canvas overlay                       | ready   | polish      | T-011, T-016                      |
 | T-023 | localStorage persistence with payload validation     | ready   | infra       | T-018, T-019                      |
 | T-024 | Desktop keyboard support                             | ready   | interaction | T-018                             |
@@ -68,7 +68,7 @@ Gotchas, pointers, constraints.
 | T-026 | PWA manifest and icons                               | ready   | infra       | T-016                             |
 | T-027 | Vercel deployment                                    | ready   | infra       | T-018, T-019                      |
 | T-028 | Rules and validator test suite                       | ready   | state       | T-004, T-007, T-008, T-010, T-011 |
-| T-029 | Real content authoring                               | blocked | data        | T-004, T-020                      |
+| T-029 | Real content authoring                               | ready   | data        | T-004, T-020                      |
 
 ## Dependency graph
 

@@ -1,0 +1,59 @@
+.menu-button {
+  position: absolute;
+  right: calc(var(--gap) * 2);
+  bottom: calc(var(--gap) * 2);
+  z-index: 100;
+  width: 44px; /* minimum comfortable tap target */
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--slot-border);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.menu-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 101;
+}
+
+.menu-panel {
+  position: absolute;
+  right: calc(var(--gap) * 2);
+  bottom: calc(44px + var(--gap) * 4);
+  z-index: 102;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--gap) * 2);
+  padding: calc(var(--gap) * 3);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+}
+
+.menu-seed {
+  font-family: monospace;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.menu-new-deal {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #e9b949;
+  color: #3a2c0a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu-backdrop.hidden,
+.menu-panel.hidden {
+  display: none;
+}
