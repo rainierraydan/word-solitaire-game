@@ -1,0 +1,55 @@
+.card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: calc(var(--card-w) * 0.08);
+  transform-style: preserve-3d;
+  font-family: system-ui, sans-serif;
+}
+
+.card .face {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.22s ease-out;
+}
+
+.card .back {
+  background: #2c4e8a;
+  border: 2px solid #4a6ca8; /* inset-style highlight, no box-shadow */
+  transform: rotateY(0deg);
+}
+
+.card .front {
+  background: #f6f1e3;
+  border: 1px solid #b9ac8d;
+  color: #2b2620;
+  font-size: calc(var(--card-w) * 0.22);
+  text-align: center;
+  transform: rotateY(180deg);
+}
+
+.card.category .front {
+  background: #e9b949;
+  border: 2px solid #8a6b1f;
+  color: #3a2c0a;
+  font-weight: 700;
+}
+
+.card.face-up .back {
+  transform: rotateY(-180deg);
+}
+
+.card.face-up .front {
+  transform: rotateY(0deg);
+}
