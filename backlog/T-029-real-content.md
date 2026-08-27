@@ -1,36 +1,34 @@
 ---
 id: T-029
 title: Real content authoring
-status: ready
+status: done
 depends_on: [T-004, T-020]
-blocks: []
+blocks: [T-038]
 estimate: M
 area: data
 ---
 
 ## Goal
 
-Replace the placeholder set with the shipping content: 10 categories of 5–6 words each.
+Replace the placeholder set with the shipping content: ~20 categories of ~12 words each, the
+pool the randomized deal (T-038) draws subsets from.
 
 ## Context
 
-Deliberately last among content work: it depends on the legibility ticket (T-020) so words are
-chosen against the measured character budget instead of a guess. The target size was decided
-2026-08-26 — ~10 × 5–6 (≈ 63–70 cards) for a session noticeably richer than Klondike without
-doubling its length; the earlier ~15 × 5 idea was dropped.
+Size decision 2026-08-27 (user), superseding the 10 × 5–6 target of 2026-08-26: games now use a
+random subset of categories (per level, T-039) and a random 2–8 words per chosen category
+(T-038), so the full pool must be much larger than any single game. English, per the same
+decision. Depends on T-020 so words are chosen against the measured character budget.
 
 ## Acceptance criteria
 
-- [ ] Exactly 10 categories, each with 5 or 6 words, with both counts present (uneven by
-      construction).
-- [ ] Every word and category name fits the character budget recorded in T-020; the validator
-      passes with zero errors and zero length warnings.
+- [ ] ~20 categories with ~12 words each (240+ cards in the pool).
+- [ ] Every word fits the T-020 budget (≤ 8 chars); category names ≤ 7 chars or multi-word.
+      The validator passes with zero errors and zero length warnings.
 - [ ] No duplicate words across categories; each word belongs unambiguously to its category for
       a general audience — no trivia knowledge required.
-- [ ] Words within a category vary in length and first letters where possible, so cards are
-      distinguishable at a glance.
-- [ ] One full game played to completion on the real set (device or emulation) with no
-      legibility regressions at 360×640.
+- [ ] Words within a category vary in length and first letters where possible.
+- [ ] Legibility spot-checked at 360×640 on the new content.
 
 ## Notes
 
