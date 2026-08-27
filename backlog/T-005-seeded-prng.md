@@ -1,7 +1,7 @@
 ---
 id: T-005
 title: Seeded PRNG and shuffle
-status: blocked
+status: ready
 depends_on: [T-002]
 blocks: [T-007, T-008]
 estimate: S

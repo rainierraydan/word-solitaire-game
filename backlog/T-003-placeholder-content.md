@@ -1,7 +1,7 @@
 ---
 id: T-003
 title: Placeholder content set
-status: blocked
+status: ready
 depends_on: [T-002]
 blocks: [T-004, T-006, T-020]
 estimate: S

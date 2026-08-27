@@ -1,7 +1,7 @@
 ---
 id: T-002
 title: Directory scaffold and HTML shell
-status: ready
+status: done
 depends_on: [T-001]
 blocks: [T-003, T-005, T-012]
 estimate: S

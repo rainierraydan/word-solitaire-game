@@ -1,7 +1,7 @@
 ---
 id: T-012
 title: Board shell — regions, sizing variables, responsive fit
-status: blocked
+status: ready
 depends_on: [T-002]
 blocks: [T-013, T-014]
 estimate: M
