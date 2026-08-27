@@ -43,8 +43,8 @@ Gotchas, pointers, constraints.
 | T-001 | Tooling setup — Vite, TS strict, ESLint, Vitest      | done    | infra       | —                                 |
 | T-002 | Directory scaffold and HTML shell                    | done    | infra       | T-001                             |
 | T-003 | Placeholder content set                              | done    | data        | T-002                             |
-| T-004 | Content validator                                    | ready   | data        | T-003                             |
-| T-005 | Seeded PRNG and shuffle                              | ready   | state       | T-002                             |
+| T-004 | Content validator                                    | done    | data        | T-003                             |
+| T-005 | Seeded PRNG and shuffle                              | done    | state       | T-002                             |
 | T-006 | State model and core types                           | ready   | state       | T-003                             |
 | T-007 | Deck construction and deal algorithm                 | blocked | state       | T-005, T-006                      |
 | T-008 | Stock/waste actions — draw and reshuffle-recycle     | blocked | state       | T-005, T-006                      |

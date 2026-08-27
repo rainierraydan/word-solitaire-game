@@ -1,7 +1,7 @@
 ---
 id: T-004
 title: Content validator
-status: ready
+status: done
 depends_on: [T-003]
 blocks: [T-016, T-028, T-029]
 estimate: M
