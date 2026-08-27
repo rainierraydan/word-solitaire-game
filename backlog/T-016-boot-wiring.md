@@ -1,7 +1,7 @@
 ---
 id: T-016
 title: Boot wiring — validate, seed, deal, first paint
-status: blocked
+status: done
 depends_on: [T-004, T-007, T-015]
 blocks: [T-017, T-021, T-022, T-026]
 estimate: M

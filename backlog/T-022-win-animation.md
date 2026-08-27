@@ -1,7 +1,7 @@
 ---
 id: T-022
 title: Win animation — canvas overlay
-status: blocked
+status: ready
 depends_on: [T-011, T-016]
 blocks: []
 estimate: M

@@ -1,7 +1,7 @@
 ---
 id: T-026
 title: PWA manifest and icons
-status: blocked
+status: ready
 depends_on: [T-016]
 blocks: []
 estimate: S
