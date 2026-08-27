@@ -1,7 +1,7 @@
 ---
 id: T-015
 title: render(state) — full, idempotent DOM writes
-status: ready
+status: done
 depends_on: [T-013, T-014]
 blocks: [T-016]
 estimate: M

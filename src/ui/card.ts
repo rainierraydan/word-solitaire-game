@@ -1,4 +1,4 @@
-import type { Card } from '../game/state';
+import type { Card, CardId } from '../game/state';
 import './card.css';
 
 /**
@@ -18,4 +18,8 @@ export function createCardElement(card: Card): HTMLElement {
 
   el.append(back, front);
   return el;
+}
+
+export function createCardElements(cards: Record<CardId, Card>): Map<CardId, HTMLElement> {
+  return new Map(Object.values(cards).map((card) => [card.id, createCardElement(card)]));
 }

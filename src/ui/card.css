@@ -8,6 +8,9 @@
   border-radius: calc(var(--card-w) * 0.08);
   transform-style: preserve-3d;
   font-family: system-ui, sans-serif;
+  transition:
+    transform 0.22s ease-out,
+    opacity 0.22s ease-out;
 }
 
 .card .face {
@@ -44,6 +47,12 @@
   border: 2px solid #8a6b1f;
   color: #3a2c0a;
   font-weight: 700;
+}
+
+/* Cards of completed categories leave the board. */
+.card.off-board {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .card.face-up .back {
