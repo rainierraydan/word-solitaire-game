@@ -1,4 +1,10 @@
-import { foundationProgress, type CardId, type FoundationId, type State } from '../game/state';
+import {
+  foundationProgress,
+  FOUNDATION_IDS,
+  type CardId,
+  type FoundationId,
+  type State,
+} from '../game/state';
 import { layout, type BoardMetrics } from './layout';
 
 /**
@@ -15,6 +21,7 @@ export function render(
   metrics: BoardMetrics,
 ): void {
   const positions = layout(state, metrics);
+  const onFoundation = new Set(FOUNDATION_IDS.flatMap((id) => state.piles[id]));
   for (const [cardId, el] of cardEls) {
     const pos = positions.get(cardId);
     el.classList.toggle('off-board', pos === undefined);
@@ -22,6 +29,7 @@ export function render(
     el.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
     el.style.zIndex = String(pos.z);
     el.classList.toggle('face-up', state.faceUp.has(cardId));
+    el.classList.toggle('on-foundation', onFoundation.has(cardId));
   }
   for (const [foundationId, label] of foundationLabels) {
     const progress = foundationProgress(state, foundationId);

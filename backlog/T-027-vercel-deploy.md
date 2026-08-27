@@ -1,7 +1,7 @@
 ---
 id: T-027
 title: Vercel deployment
-status: in-progress
+status: done
 depends_on: [T-018, T-019]
 blocks: []
 estimate: S
@@ -47,4 +47,4 @@ default, not extra work here.
   Bundle: 4.15 kB JS + 1.14 kB CSS (gzip).
 - The Vercel project is NOT git-connected — deploys are manual via `npx vercel deploy --prod`.
   Connecting the GitHub repo in the Vercel dashboard would enable auto-deploy on push to main.
-- Pending: verification on a real phone in portrait (user).
+- Verified by the user on a real phone in portrait, 2026-08-27 — gestures confirmed working.

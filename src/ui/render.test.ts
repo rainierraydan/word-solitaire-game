@@ -95,4 +95,16 @@ describe('render', () => {
     expect(labels.get('foundation-0')?.hidden).toBe(true);
     expect(labels.get('foundation-0')?.textContent).toBe('');
   });
+
+  it('marks foundation cards with on-foundation, and clears it when they leave', () => {
+    const { state, els, labels } = setup();
+    const categoryCard = Object.values(state.cards).find((c) => c.kind === 'category');
+    if (categoryCard === undefined) throw new Error('expected a category card');
+    state.piles['foundation-2'] = [categoryCard.id];
+    render(state, els, labels, metrics);
+    expect(els.get(categoryCard.id)?.classList.contains('on-foundation')).toBe(true);
+
+    render({ ...state, piles: { ...state.piles, 'foundation-2': [] } }, els, labels, metrics);
+    expect(els.get(categoryCard.id)?.classList.contains('on-foundation')).toBe(false);
+  });
 });

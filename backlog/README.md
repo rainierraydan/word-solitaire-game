@@ -66,13 +66,16 @@ Gotchas, pointers, constraints.
 | T-024 | Desktop keyboard support                             | ready   | interaction | T-018                             |
 | T-025 | Drag-and-drop enhancement                            | done    | interaction | T-019, T-030                      |
 | T-026 | PWA manifest and icons                               | ready   | infra       | T-016                             |
-| T-027 | Vercel deployment                                    | in-progress | infra       | T-018, T-019                      |
+| T-027 | Vercel deployment                                    | done        | infra       | T-018, T-019                      |
 | T-028 | Rules and validator test suite                       | ready   | state       | T-004, T-007, T-008, T-010, T-011 |
 | T-029 | Real content authoring                               | ready   | data        | T-004, T-020                      |
 | T-030 | Tableau same-category stacking rule                  | done    | state       | T-010                             |
 | T-031 | Foundation category label and progress counter      | done    | layout      | T-015                             |
 | T-032 | Word visible on the fan strip of stacked cards       | done        | layout  | T-020, T-030                      |
 | T-033 | Move same-category runs as a unit                    | done        | state   | T-025, T-030                      |
+| T-034 | Center the top card's word on foundations            | done        | layout  | T-031, T-032                      |
+| T-035 | Allow waste cards onto the tableau                   | done        | state   | T-030                             |
+| T-036 | Same-category stacks move as indivisible blocks      | done        | state   | T-033                             |
 
 ## Dependency graph
 
@@ -105,6 +108,8 @@ graph LR
     T028[T-028 rules test suite]
     T030[T-030 tableau stacking]
     T033[T-033 run moves]
+    T035[T-035 waste to tableau]
+    T036[T-036 indivisible blocks]
   end
   subgraph ui
     T012[T-012 board shell]
@@ -114,6 +119,7 @@ graph LR
     T020[T-020 legibility]
     T031[T-031 foundation label]
     T032[T-032 fan strip labels]
+    T034[T-034 foundation card word]
   end
   subgraph interaction
     T017[T-017 pointer input]
@@ -158,6 +164,10 @@ graph LR
   T030 --> T033
   T025 --> T033
   T020 --> T032
+  T031 --> T034
+  T032 --> T034
+  T030 --> T035
+  T033 --> T036
   T010 --> T028
   T011 --> T022
   T011 --> T028

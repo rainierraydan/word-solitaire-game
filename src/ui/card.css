@@ -59,6 +59,12 @@
   font-weight: 600;
 }
 
+/* Foundations don't fan: center the word, clear of the progress label strip. */
+.card.on-foundation .front {
+  align-items: center;
+  padding-top: 0;
+}
+
 /* While dragged: follow the pointer instantly and let drops hit what is underneath. */
 .card.dragging {
   transition: none;
