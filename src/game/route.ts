@@ -19,13 +19,30 @@ import {
   type CardId,
   type PileId,
   type State,
+  type TableauId,
 } from './state';
 
+/** The leftmost column whose face-up top card belongs to categoryId. */
+function matchingColumn(
+  state: State,
+  categoryId: string,
+  exclude: PileId | undefined,
+): TableauId | undefined {
+  return TABLEAU_IDS.find((id) => {
+    if (id === exclude) return false;
+    const top = topCard(state, id);
+    return (
+      top !== undefined && state.faceUp.has(top) && state.cards[top]?.categoryId === categoryId
+    );
+  });
+}
+
 /**
- * Routes a tapped card — or the tableau run it heads — to its best legal
- * destination, deterministically: matching open foundation > leftmost empty
- * foundation slot (runs holding the category card) > leftmost empty tableau
- * column (tableau sources only).
+ * Routes a tapped card — or the tableau block it belongs to — to its best
+ * legal destination, deterministically: matching open foundation (or leftmost
+ * empty slot for blocks holding the category card) > leftmost same-category
+ * stack > leftmost empty column (tableau sources only — a tap never dumps the
+ * waste onto an empty column; dragging does).
  */
 export function routeCardTap(state: State, cardId: CardId): ActionResult {
   const pile = findPile(state, cardId);
@@ -40,9 +57,9 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
 
   let holdsCategoryCard = card.kind === 'category';
   if (isTableauId(pile)) {
-    const run = tableauRun(state, cardId);
-    if (run === undefined) return invalid('card is covered');
-    holdsCategoryCard = run.some((id) => state.cards[id]?.kind === 'category');
+    const block = tableauRun(state, cardId);
+    if (block === undefined) return invalid('card is covered');
+    holdsCategoryCard = block.some((id) => state.cards[id]?.kind === 'category');
   } else if (topCard(state, 'waste') !== cardId) {
     return invalid('card is covered');
   }
@@ -54,6 +71,9 @@ export function routeCardTap(state: State, cardId: CardId): ActionResult {
     const open = FOUNDATION_IDS.find((id) => openCategoryId(state, id) === card.categoryId);
     if (open !== undefined) return playToFoundation(state, cardId, open);
   }
+
+  const stack = matchingColumn(state, card.categoryId, pile);
+  if (stack !== undefined) return moveToColumn(state, cardId, stack);
 
   if (isTableauId(pile)) {
     const emptyColumn = TABLEAU_IDS.find((id) => isPileEmpty(state, id));

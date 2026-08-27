@@ -216,15 +216,28 @@ describe('moveToColumn', () => {
     expect(serializeState(state)).toBe(before);
   });
 
-  it('rejects the waste and the stock as sources', () => {
+  it('moves the waste top to an empty column or a matching stack', () => {
     const state = makeState();
-    state.piles.waste = ['word:a:a1'];
+    state.piles.waste = ['word:b:b1', 'word:b:b2'];
+    state.piles['tableau-1'] = ['word:b:b3'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2', 'word:b:b3']);
+
+    const toEmpty = expectOk(moveToColumn(state, 'word:b:b2', 'tableau-0'));
+    expect(toEmpty.piles['tableau-0']).toEqual(['word:b:b2']);
+    expect(toEmpty.piles.waste).toEqual(['word:b:b1']);
+
+    const toStack = expectOk(moveToColumn(state, 'word:b:b2', 'tableau-1'));
+    expect(toStack.piles['tableau-1']).toEqual(['word:b:b3', 'word:b:b2']);
+  });
+
+  it('rejects covered waste cards and the stock as sources', () => {
+    const state = makeState();
+    state.piles.waste = ['word:a:a1', 'word:b:b1'];
     state.piles.stock = ['word:a:a2'];
-    expect(expectInvalid(moveToColumn(state, 'word:a:a1', 'tableau-0'))).toMatch(
-      /only tableau cards/,
-    );
+    state.faceUp = new Set(['word:a:a1', 'word:b:b1']);
+    expect(expectInvalid(moveToColumn(state, 'word:a:a1', 'tableau-0'))).toMatch(/covered/);
     expect(expectInvalid(moveToColumn(state, 'word:a:a2', 'tableau-0'))).toMatch(
-      /only tableau cards/,
+      /only waste and tableau cards/,
     );
   });
 
@@ -269,16 +282,6 @@ describe('moveToColumn', () => {
     );
   });
 
-  it('rejects the waste as a source even with a matching stack available', () => {
-    const state = makeState();
-    state.piles.waste = ['word:b:b1'];
-    state.piles['tableau-0'] = ['word:b:b2'];
-    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
-    expect(expectInvalid(moveToColumn(state, 'word:b:b1', 'tableau-0'))).toMatch(
-      /only tableau cards/,
-    );
-  });
-
   it('rejects moving a card onto its own column', () => {
     const state = makeState();
     state.piles['tableau-0'] = ['word:b:b1'];
@@ -302,6 +305,15 @@ describe('moveToColumn', () => {
     state.piles['tableau-0'] = ['word:b:b1', 'word:a:a1'];
     state.faceUp = new Set(['word:b:b1', 'word:a:a1']);
     expect(expectInvalid(moveToColumn(state, 'word:b:b1', 'tableau-2'))).toMatch(/covered/);
+  });
+
+  it('never splits a block: grabbing its top card still moves the whole block', () => {
+    const state = makeState();
+    state.piles['tableau-0'] = ['word:b:b1', 'word:b:b2'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
+    const next = expectOk(moveToColumn(state, 'word:b:b2', 'tableau-1'));
+    expect(next.piles['tableau-1']).toEqual(['word:b:b1', 'word:b:b2']);
+    expect(next.piles['tableau-0']).toEqual([]);
   });
 });
 

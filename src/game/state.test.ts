@@ -99,10 +99,21 @@ describe('selectors', () => {
     state.faceUp = new Set(['word:fig', 'word:mango', 'word:papaya']);
 
     expect(tableauRun(state, 'word:fig')).toEqual(['word:fig', 'word:mango', 'word:papaya']);
-    expect(tableauRun(state, 'word:mango')).toEqual(['word:mango', 'word:papaya']);
     expect(tableauRun(state, 'word:red')).toBeUndefined(); // covered by another category
     state.faceUp.delete('word:papaya');
     expect(tableauRun(state, 'word:fig')).toBeUndefined(); // face-down card in the slice
+  });
+
+  it('tableauRun is the whole indivisible block from any grab point', () => {
+    const state = makeState();
+    state.cards['word:papaya'] = makeCard('word:papaya', 'word', 'fruits');
+    state.piles['foundation-0'] = [];
+    state.piles['tableau-2'] = ['word:fig', 'word:mango', 'word:papaya'];
+    state.faceUp = new Set(['word:fig', 'word:mango', 'word:papaya']);
+    const block = ['word:fig', 'word:mango', 'word:papaya'];
+    expect(tableauRun(state, 'word:papaya')).toEqual(block); // grabbed the top
+    expect(tableauRun(state, 'word:mango')).toEqual(block); // grabbed the middle
+    expect(tableauRun(state, 'word:fig')).toEqual(block); // grabbed the bottom
   });
 
   it('tableauRun is undefined off the tableau', () => {

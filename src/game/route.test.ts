@@ -67,10 +67,31 @@ describe('routeCardTap', () => {
     expect(next.faceUp.has('word:b:b1')).toBe(true);
   });
 
-  it('never routes a waste card to a tableau column', () => {
+  it('never routes a waste card to an empty column on a tap', () => {
     const state = makeState();
     state.piles.waste = ['word:a:a1'];
+    state.faceUp = new Set(['word:a:a1']);
     expect(expectInvalid(routeCardTap(state, 'word:a:a1'))).toMatch(/no legal destination/);
+  });
+
+  it('routes a waste word to the leftmost matching stack when no foundation is open', () => {
+    const state = makeState();
+    state.piles.waste = ['word:b:b1'];
+    state.piles['tableau-3'] = ['word:b:b2'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2']);
+    const next = expectOk(routeCardTap(state, 'word:b:b1'));
+    expect(next.piles['tableau-3']).toEqual(['word:b:b2', 'word:b:b1']);
+    expect(next.piles.waste).toEqual([]);
+  });
+
+  it('merges a tableau block onto a matching stack before using an empty column', () => {
+    const state = makeState();
+    state.piles['tableau-2'] = ['word:b:b1', 'word:b:b2'];
+    state.piles['tableau-4'] = ['word:b:b3'];
+    state.faceUp = new Set(['word:b:b1', 'word:b:b2', 'word:b:b3']);
+    const next = expectOk(routeCardTap(state, 'word:b:b2'));
+    expect(next.piles['tableau-4']).toEqual(['word:b:b3', 'word:b:b1', 'word:b:b2']);
+    expect(next.piles['tableau-0']).toEqual([]);
   });
 
   it('prefers the matching foundation over an empty column for a tableau word', () => {

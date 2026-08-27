@@ -77,14 +77,16 @@ Runs at boot and as a unit test. Fails loudly and legibly on:
 
 ### Tableau
 
-- Only the top card of a column may be played.
 - When a face-up card leaves and reveals a face-down card, that card flips face-up.
 - **No rank or color sequencing** — the tableau is storage to be excavated.
-- A single tableau top card may move onto an **empty column** (any card — the escape valve
-  against burying) or onto a column whose face-up top card belongs to the **same category**
-  (word or category card), so a group can be gathered below before its foundation opens
-  (decision 2026-08-27, superseding the empty-column-only rule). The waste is never a source
-  for tableau moves.
+- A card may move onto an **empty column** (any card — the escape valve against burying) or
+  onto a column whose face-up top card belongs to the **same category** (word or category
+  card), so a group can be gathered below before its foundation opens (decision 2026-08-27,
+  superseding the empty-column-only rule). Sources: any tableau block, or the top waste card
+  (decision 2026-08-27, superseding waste-is-never-a-source).
+- Stacked same-category face-up cards form an **indivisible block**: grabbing any card of it
+  moves the whole block, and it can never be split (decision 2026-08-27). A lone top card is a
+  block of one.
 
 ### Stock
 

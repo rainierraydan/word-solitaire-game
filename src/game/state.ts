@@ -87,10 +87,10 @@ export function findPile(state: State, cardId: CardId): PileId | undefined {
 }
 
 /**
- * The consecutive same-category, face-up cards from cardId to the top of its
- * tableau column — the unit that moves together. A playable top card is a run
- * of one; undefined when the card is covered by another category, face-down,
- * or not on the tableau.
+ * The maximal same-category, face-up block containing cardId on its tableau
+ * column — the indivisible unit that moves together. Grabbing any card of a
+ * stack yields the whole stack; a lone top card is a block of one. Undefined
+ * when the card is covered by another category, face-down, or off the tableau.
  */
 export function tableauRun(state: State, cardId: CardId): CardId[] | undefined {
   const pile = findPile(state, cardId);
@@ -98,11 +98,15 @@ export function tableauRun(state: State, cardId: CardId): CardId[] | undefined {
   const categoryId = state.cards[cardId]?.categoryId;
   if (categoryId === undefined) return undefined;
   const column = state.piles[pile];
-  const run = column.slice(column.indexOf(cardId));
-  const coherent = run.every(
-    (id) => state.faceUp.has(id) && state.cards[id]?.categoryId === categoryId,
-  );
-  return coherent ? run : undefined;
+  const partOfBlock = (id: CardId | undefined): boolean =>
+    id !== undefined && state.faceUp.has(id) && state.cards[id]?.categoryId === categoryId;
+
+  let start = column.indexOf(cardId);
+  while (start > 0 && partOfBlock(column[start - 1])) {
+    start--;
+  }
+  const block = column.slice(start);
+  return block.every((id) => partOfBlock(id)) ? block : undefined;
 }
 
 export function topCard(state: State, pileId: PileId): CardId | undefined {

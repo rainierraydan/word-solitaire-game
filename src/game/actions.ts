@@ -138,21 +138,29 @@ export function playToFoundation(
 }
 
 /**
- * Moves a tableau run onto another column: an empty column takes any run
- * (the escape valve); a non-empty one only a run of the same category as its
- * face-up top card (word or category card).
+ * Moves the waste top card or a tableau block onto a column: an empty column
+ * takes anything (the escape valve); a non-empty one only cards of the same
+ * category as its face-up top (word or category card).
  */
 export function moveToColumn(state: State, cardId: CardId, columnId: TableauId): ActionResult {
   const source = findPile(state, cardId);
-  if (source === undefined || !isTableauId(source)) {
-    return invalid('only tableau cards can move to a column');
-  }
-  if (source === columnId) {
-    return invalid('card is already on that column');
-  }
-  const run = tableauRun(state, cardId);
-  if (run === undefined) {
-    return invalid(`card "${cardId}" is covered`);
+  let unit: CardId[];
+  if (source === 'waste') {
+    if (topCard(state, 'waste') !== cardId) {
+      return invalid(`card "${cardId}" is covered`);
+    }
+    unit = [cardId];
+  } else if (source !== undefined && isTableauId(source)) {
+    if (source === columnId) {
+      return invalid('card is already on that column');
+    }
+    const block = tableauRun(state, cardId);
+    if (block === undefined) {
+      return invalid(`card "${cardId}" is covered`);
+    }
+    unit = block;
+  } else {
+    return invalid('only waste and tableau cards can move to a column');
   }
 
   const targetTop = topCard(state, columnId);
@@ -170,8 +178,8 @@ export function moveToColumn(state: State, cardId: CardId, columnId: TableauId):
   }
 
   const next = cloneState(state);
-  next.piles[source] = next.piles[source].slice(0, -run.length);
-  next.piles[columnId].push(...run);
+  next.piles[source] = next.piles[source].slice(0, -unit.length);
+  next.piles[columnId].push(...unit);
   revealTop(next, source);
   return { ok: true, state: next };
 }
