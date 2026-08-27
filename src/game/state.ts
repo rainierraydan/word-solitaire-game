@@ -36,6 +36,14 @@ export type PileId = 'stock' | 'waste' | FoundationId | TableauId;
 
 export const PILE_IDS: readonly PileId[] = ['stock', 'waste', ...FOUNDATION_IDS, ...TABLEAU_IDS];
 
+export function isTableauId(pileId: PileId): pileId is TableauId {
+  return (TABLEAU_IDS as readonly PileId[]).includes(pileId);
+}
+
+export function isFoundationId(pileId: PileId): pileId is FoundationId {
+  return (FOUNDATION_IDS as readonly PileId[]).includes(pileId);
+}
+
 export type State = {
   cards: Record<CardId, Card>;
   piles: Record<PileId, CardId[]>; // ordered bottom → top

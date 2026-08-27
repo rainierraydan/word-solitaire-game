@@ -1,7 +1,7 @@
 ---
 id: T-008
 title: Stock and waste actions — draw and reshuffle-recycle
-status: ready
+status: done
 depends_on: [T-005, T-006]
 blocks: [T-018, T-028]
 estimate: M

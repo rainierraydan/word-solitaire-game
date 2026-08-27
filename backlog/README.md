@@ -46,11 +46,11 @@ Gotchas, pointers, constraints.
 | T-004 | Content validator                                    | done    | data        | T-003                             |
 | T-005 | Seeded PRNG and shuffle                              | done    | state       | T-002                             |
 | T-006 | State model and core types                           | done    | state       | T-003                             |
-| T-007 | Deck construction and deal algorithm                 | ready   | state       | T-005, T-006                      |
-| T-008 | Stock/waste actions — draw and reshuffle-recycle     | ready   | state       | T-005, T-006                      |
-| T-009 | Foundation actions — open, file, complete, release   | ready   | state       | T-006                             |
-| T-010 | Tableau actions — reveal, empty-column move          | ready   | state       | T-006                             |
-| T-011 | Win detection                                        | blocked | state       | T-009                             |
+| T-007 | Deck construction and deal algorithm                 | done    | state       | T-005, T-006                      |
+| T-008 | Stock/waste actions — draw and reshuffle-recycle     | done    | state       | T-005, T-006                      |
+| T-009 | Foundation actions — open, file, complete, release   | done    | state       | T-006                             |
+| T-010 | Tableau actions — reveal, empty-column move          | done    | state       | T-006                             |
+| T-011 | Win detection                                        | ready   | state       | T-009                             |
 | T-012 | Board shell — regions, sizing, responsive fit        | done    | layout      | T-002                             |
 | T-013 | Card DOM structure and CSS, including the flip       | ready   | layout      | T-006, T-012                      |
 | T-014 | layout(state) — piles to pixel positions             | ready   | layout      | T-006, T-012                      |
