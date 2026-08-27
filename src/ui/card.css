@@ -8,6 +8,10 @@
   border-radius: calc(var(--card-w) * 0.08);
   transform-style: preserve-3d;
   font-family: system-ui, sans-serif;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
   transition:
     transform 0.22s ease-out,
     opacity 0.22s ease-out;
@@ -40,6 +44,9 @@
   /* Floor of 9px: text never shrinks below it, even on narrower cards. */
   font-size: max(calc(var(--card-w) * 0.2), 9px);
   line-height: 1.15;
+  /* Top-aligned so the word stays readable on the fan strip when covered. */
+  align-items: flex-start;
+  padding-top: calc(var(--card-w) * 0.04);
   text-align: center;
   text-wrap: balance;
   transform: rotateY(180deg);

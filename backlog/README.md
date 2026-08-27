@@ -71,6 +71,8 @@ Gotchas, pointers, constraints.
 | T-029 | Real content authoring                               | ready   | data        | T-004, T-020                      |
 | T-030 | Tableau same-category stacking rule                  | done    | state       | T-010                             |
 | T-031 | Foundation category label and progress counter      | done    | layout      | T-015                             |
+| T-032 | Word visible on the fan strip of stacked cards       | done        | layout  | T-020, T-030                      |
+| T-033 | Move same-category runs as a unit                    | done        | state   | T-025, T-030                      |
 
 ## Dependency graph
 
@@ -102,6 +104,7 @@ graph LR
     T011[T-011 win detection]
     T028[T-028 rules test suite]
     T030[T-030 tableau stacking]
+    T033[T-033 run moves]
   end
   subgraph ui
     T012[T-012 board shell]
@@ -110,6 +113,7 @@ graph LR
     T015[T-015 render fn]
     T020[T-020 legibility]
     T031[T-031 foundation label]
+    T032[T-032 fan strip labels]
   end
   subgraph interaction
     T017[T-017 pointer input]
@@ -150,6 +154,10 @@ graph LR
   T010 --> T019
   T010 --> T030
   T030 --> T025
+  T030 --> T032
+  T030 --> T033
+  T025 --> T033
+  T020 --> T032
   T010 --> T028
   T011 --> T022
   T011 --> T028
