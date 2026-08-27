@@ -40,8 +40,8 @@ Gotchas, pointers, constraints.
 
 | ID    | Title                                                | Status  | Area        | Depends on                        |
 | ----- | ---------------------------------------------------- | ------- | ----------- | --------------------------------- |
-| T-001 | Tooling setup — Vite, TS strict, ESLint, Vitest      | ready   | infra       | —                                 |
-| T-002 | Directory scaffold and HTML shell                    | blocked | infra       | T-001                             |
+| T-001 | Tooling setup — Vite, TS strict, ESLint, Vitest      | done    | infra       | —                                 |
+| T-002 | Directory scaffold and HTML shell                    | ready   | infra       | T-001                             |
 | T-003 | Placeholder content set                              | blocked | data        | T-002                             |
 | T-004 | Content validator                                    | blocked | data        | T-003                             |
 | T-005 | Seeded PRNG and shuffle                              | blocked | state       | T-002                             |

@@ -1,7 +1,7 @@
 ---
 id: T-001
 title: Tooling setup — Vite, TypeScript strict, ESLint, Vitest
-status: ready
+status: done
 depends_on: []
 blocks: [T-002]
 estimate: M

@@ -39,6 +39,7 @@ npm run build       # production build
 npm run preview     # serve the build locally
 npm run test        # unit tests (rules and content validator)
 npm run typecheck   # tsc --noEmit
+npm run lint        # ESLint
 ```
 
 ## Code quality
