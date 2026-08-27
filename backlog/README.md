@@ -66,7 +66,7 @@ Gotchas, pointers, constraints.
 | T-024 | Desktop keyboard support                             | ready   | interaction | T-018                             |
 | T-025 | Drag-and-drop enhancement                            | ready   | interaction | T-019                             |
 | T-026 | PWA manifest and icons                               | ready   | infra       | T-016                             |
-| T-027 | Vercel deployment                                    | ready   | infra       | T-018, T-019                      |
+| T-027 | Vercel deployment                                    | in-progress | infra       | T-018, T-019                      |
 | T-028 | Rules and validator test suite                       | ready   | state       | T-004, T-007, T-008, T-010, T-011 |
 | T-029 | Real content authoring                               | ready   | data        | T-004, T-020                      |
 
